@@ -178,6 +178,9 @@
                 <i class="fa fa-sticky-note  mr-2"></i>Gstrb-1 Report
             </a>
             <!-- sjr end -->
+            <a href="<?=site_url('Admin/Dashboard/CompanyReport')?>" class="dropdown-item">
+                <i class="fa fa-sticky-note  mr-2"></i>Companies Report
+            </a>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Of the Above</a>
         </div>

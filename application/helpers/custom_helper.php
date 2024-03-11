@@ -270,7 +270,7 @@
     function check_join_table($fields,$mainTableName)
     {   
         $tblName = array();
-    //    check_p($fields);
+        //    check_p($fields);
     
         $mainTableName_exact=str_replace('tbl','',$mainTableName);
 	    foreach($fields as $fieldsKey)
@@ -1698,9 +1698,6 @@
     }*/
     function get_array_for_datalist($array,$tableIdName)
     {
-        //$array=json_decode(json_encode($object), true);
-        //check_p($array['CustomerName']);
-        //check_p($array);
         foreach($array as $key=>$data)
         {
             $newKey=str_replace("Id","Name",$key);
@@ -1708,7 +1705,6 @@
             //check_p($mainTableColumn);
             if(check_id($key)&&$newKey!=$mainTableColumn&&$newKey!="PlaceofsupplyName"&&$newKey!="GroupName"&&$newKey!="VechileModelName"&&$newKey!="VechileModelName"&&$newKey!="CustomerName"&&$newKey!="AdvisoryName"&&$newKey!="InsuranceCompanyName"&&$newKey!="MechanicName"&&$newKey!="PreInvoicedetailName"&&$newKey!="CategoryName"&&$newKey!="AddressName"&&$newKey!="CompanyName"&&$newKey!="AccountsName")
             {
-                
                 //patia static for rajesh bhauv wala
                 //if($newKey!="TypeofworkName"&&$newKey!="TaskDetailName")
                 //{
@@ -1720,8 +1716,12 @@
             }
             else
             {
+                if($tableIdName == 'CompaniesId' && $newKey == 'CompanyName'){
+                    $newArray[$key]=$data."-".$array['CompanyName'];
+                }
+                else{
                     $newArray[$key]=$data;
-                    //$newArray[$key]="asd";
+                }
             }
                 
         }
@@ -2319,4 +2319,17 @@
         
         return $str;
     }
+
+    // check companies id to data get
+    function getCompaniesData($id,$field = ['CompaniesName'])
+    {
+	    $CI1 = get_instance();
+        $CI1->load->model('Admin/MainModel','mm');
+
+        $where = array('CompaniesId' => $id);
+	    $data=$CI1->mm->get_a_selectCol('tblcompanies',$field,$where);
+
+	    return $data;
+    }
+    // end
 ?>

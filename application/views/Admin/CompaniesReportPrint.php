@@ -53,14 +53,14 @@
                                     if(empty($DealerData1))
                                     {
                                  ?>
-                                 <h5 class="samu">Billed to :-<?=$DealerData[0]->TempoName?></h5>
-                                 <h5><?=$DealerData[0]->TempoDriverName?></h5>
+                                 <h5 class="samu">Billed to :-<?=$DealerData[0]->CompaniesName?></h5>
+                                 <h5><?=$DealerData[0]->CompaniesAddress?></h5>
                                  <?php
                                     }
                                     else
                                     {
                                  ?>
-                                 <h5 class="samu">Billed to :<?=$DealerData1['TempoName']?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h5>
+                                 <h5 class="samu">Billed to :<?=$DealerData1['CompaniesName']?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h5>
                                  <?php
                                     }
                                  ?>
@@ -100,41 +100,60 @@
                       <table class="table text-left table-bordered chota-table">
                           <thead>
                             <tr>
+                                <?php if($InvoiceType == 'lr'){?>
                                 <th>Sr No.</th>
-                              <th>Lr No</th>
-                              <th>Tempo</th>
-                              <th>Lr Date</th>
-                              <th>Product</th>
-                              <th>Consignee</th>
-                              <th>To</th>
-                              <th>Box</th>
-                              <th>Packing</th>
-                              <th>Weight</th>
-                              <th>Freight</th>
-                              <th>Hamali</th>
-                              <th>Rate</th>
-                              <th>Total</th>
+                                <th>Lr No</th>
+                                <th>Tempo</th>
+                                <th>Lr Date</th>
+                                <th>Product</th>
+                                <th>Consignee</th>
+                                <th>To</th>
+                                <th>Box</th>
+                                <th>Packing</th>
+                                <th>Weight</th>
+                                <th>Freight</th>
+                                <th>Hamali</th>
+                                <th>Rate</th>
+                                <th>Total</th>
+                                <?php }else{?>
+                                <th>Sr No.</th>
+                                <th>Lr No</th>
+                                <th>Tempo</th>
+                                <th>Lr Date</th>
+                                <th>Consignee</th>
+                                <th>Total Pallet</th>
+                                <th>Rate</th>
+                                <th>Total</th>
+                                <?php }?>
                             </tr>
                          </thead>
                         <?php
-                       // check_p($reportData);
                             $record = array();
                             $name = array();
                             $total=0;
                             $totalWeight=0;
                             foreach($reportData as $key=>$value)
                             {
-                              if(!in_array($value['OrderId'], $name))
-                              {
-                                  $name[] = $value['OrderId'];
-                                  $record[$key] = $value;
-                              }
+                                if($InvoiceType == 'lr'){
+                                    if(!in_array($value['OrderId'], $name))
+                                    {
+                                        $name[] = $value['OrderId'];
+                                        $record[$key] = $value;
+                                    }
+                                }
+                                else{
+                                    if(!in_array($value['OrderpalletId'], $name))
+                                    {
+                                        $name[] = $value['OrderpalletId'];
+                                        $record[$key] = $value;
+                                    }
+                                }
                             }
                             $record = array_values($record);
-                           // check_p($record);
                             
                             for($i=0;$i<(count($record));$i++)
                             { 
+                                if($InvoiceType == 'lr'){
                             ?>
                                     <tr>
                                         <td><?=($i+1)?></td>
@@ -168,27 +187,50 @@
                                <?php 
                                $total=$total+$record[$i]['OrderTotal'];
                                $totalWeight=$totalWeight+$record[$i]['OrderTotalWeight'];
+                                }
+                                else{
+                            ?>
+                                    <tr>
+                                        <td><?=($i+1)?></td>
+                                        <?php 
+                                        if($record[$i]['OrderpalletLRNO'] == " ")
+                                        {
+                                        ?>
+                                            <td><?=$record[$i]['OrderpalletLRNOauto']?></td>
+                                        <?php
+                                        }
+                                        else
+                                        {
+                                        ?>
+                                            <td><?=$record[$i]['OrderpalletLRNO']?></td>
+                                        <?php
+                                        }
+                                        ?>
+                                        <td><?=$record[$i]['TempoName']?></td>
+                                        <td><?=$record[$i]['OrderpalletDate']?></td>
+                                        <td><?=$record[$i]['Orderpalletdetail2Name']?></td>
+                                        <td><?=$record[$i]['OrderpalletTotalQty']?></td>
+                                        <td><?=$record[$i]['Orderpalletdetail2Rate']?></td>
+                                        <td><?=($record[$i]['OrderpalletTotalQty'] * $record[$i]['Orderpalletdetail2Rate'])?></td>
+                                    </tr>
+                            <?php 
+                                $total=$total+($record[$i]['OrderpalletTotalQty'] * $record[$i]['Orderpalletdetail2Rate']);
+                                $totalWeight=$totalWeight+$record[$i]['OrderpalletTotalQty'];    
+                            }
                             }
                         ?>
                         <tr>
-                            <td colspan=9 class="table text-right border">
-                                <!--<b>Total Amount</b>:-<b> <?=$total?></b>-->
+                            <td colspan=<?=$InvoiceType == 'lr'?'9':'5'?> class="table text-right border">
                             </td>
                              <td class="table text-right border">
                                 <b><?=$totalWeight?></b>
                             </td>
-                            <td colspan=3 class="table text-right border">
-                                <!--<b>Total Amount</b>:-<b> <?=$total?></b>-->
+                            <td colspan=<?=$InvoiceType == 'lr'?'3':'1'?> class="table text-right border">
                             </td>
                              <td class="table text-right border">
                                 <b><?=round($total)?></b>
                             </td>
                         </tr>
-                        <!-- <tr>-->
-                        <!--    <td colspan=13 class="table text-right border">-->
-                        <!--        <b>Total Weight </b>:-<b> <?=$totalWeight?></b>-->
-                        <!--    </td>-->
-                        <!--</tr>-->
                         <tbody>
                         
                         </tbody>

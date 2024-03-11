@@ -66,6 +66,26 @@
                               <span class="input-group-text FormModal" data-toggle="modal" data-target="#FormModal" name="tempo">+ Add</span>
                             </div>
                         </div>
+
+                        <!-- company name -->
+                        <div class=" input-group form-group col-md-3" name="CompaniesId" id="Companiesdiv" >
+                            <label class=" col-md-12"  >Companies Name</label>  
+                            <?php
+                                $CompaniesName="";
+                                if(isset($OrderData[0]->Companies) && $OrderData[0]->Companies !=""){
+                                  $CompaniesData = getCompaniesData($OrderData[0]->Companies);
+
+                                  if(!empty($CompaniesData)){
+                                    $CompaniesName = $OrderData[0]->Companies.'-'.$CompaniesData[0]->CompaniesName;
+                                  }
+                                }
+                            ?>
+                            <input type="text" class="form-control col-md-12 datalist" list="companieslist" name="CompaniesId" id="CompaniesId" value="<?=$CompaniesName ?>">
+                            <datalist id="companieslist">
+                            </datalist>
+                        </div> 
+                        <!--  -->
+
                         <div class=" input-group form-group col-md-3" name="OrderpalletPartycode"  id="OrderpalletPartycodediv" >
                         <label class=" col-md-12"  >Party Code</label> 
                             <input type="text" class="form-control col-md-12 " name="OrderpalletPartycode"  id="OrderpalletPartycode" value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderpalletPartycode:' ' ?>">

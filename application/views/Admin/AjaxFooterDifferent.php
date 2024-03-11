@@ -254,7 +254,7 @@ table.datatable
                 contentType: false,
                 processData: false,
                 success:function(data){
-                   if(data>1)
+                   if(data)
                     {
                             
                             $('#example1').DataTable().ajax.reload();

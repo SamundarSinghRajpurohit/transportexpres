@@ -35,7 +35,8 @@
                                 <b>A/C No</b> :- <?=$CompanyData[0]->CompanyAccountNo?><br>
                                 <b>IFSC CODE</b> :- <?=$CompanyData[0]->CompanyIFSCCode?><br>
                                 <b>A/C TYPE</b> :- <?=$CompanyData[0]->CompanyAccountType?><br>
-                                <b>GST No</b> :- <?=$CompanyData[0]->CompanyGSTno?>
+                                <b>GST No</b> :- <?=$CompanyData[0]->CompanyGSTno?><br>
+                                <b>Pancard No.</b> :- <?=$CompanyData[0]->CompanyPanCartNo?>
                             </td>
                         </tr>
                         </table>

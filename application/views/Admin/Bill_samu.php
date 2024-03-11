@@ -42,6 +42,7 @@
                                 <p class="samu"><b>IFSC CODE</b> :- <?=$CompanyData[0]->CompanyIFSCCode?><br></p>
                                 <p class="samu"><b>A/C TYPE</b> :- <?=$CompanyData[0]->CompanyAccountType?></p>
                                 <p class="samu"><b>GST No</b> :- <?=$CompanyData[0]->CompanyGSTno?></p>
+                                <p class="samu"><b>Pancard No.</b> :- <?=$CompanyData[0]->CompanyPanCartNo?></p>
                             </td>
                         </tr>
                         </table>
@@ -186,6 +187,7 @@
                                 <p class="samu"><b>IFSC CODE</b> :- <?=$CompanyData[0]->CompanyIFSCCode?><br></p>
                                 <p class="samu"><b>A/C TYPE</b> :- <?=$CompanyData[0]->CompanyAccountType?></p>
                                 <p class="samu"><b>GST No</b> :- <?=$CompanyData[0]->CompanyGSTno?></p>
+                                <p class="samu"><b>Pancard No.</b> :- <?=$CompanyData[0]->CompanyPanCartNo?></p>
                             </td>
                         </tr>
                         </table>

@@ -360,7 +360,6 @@ class Dashboard extends CI_Controller {
 		}
 		else
 		{
-       	     // check_p($tblName);
        	   $tblName="tblorder";
     	   $keyName="Order";
     	   $data['tableName']="tblorder";
@@ -377,16 +376,8 @@ class Dashboard extends CI_Controller {
 		
     	   $data['Fields']=$this->mm->get_table_heading($tblName);
      	   $data['OriginalFields']=$data['Fields'];
-     	   //samundar add for get all city data
      	   $comId=$this->session->CompanyId;
-     	   //$whereData=array('tblcity.CompanyId'=>$comId);
-     	   //$data['CityData']=$this->mm->get_a_data('tblcity',$whereData);
-     	   
-     	   //$whereData=array('tblstate.CompanyId'=>$comId);
-     	  // $data['StateData']=$this->mm->get_a_data('tblstate',$whereData);
-     	   
-     	   //$whereData=array('tblcountry.CompanyId'=>$comId);
-     	   //$data['CountryData']=$this->mm->get_a_data('tblcountry',$whereData);
+
      	   if(isset($id))
 			{
 				$where=array("OrderId"=>$id);
@@ -721,15 +712,9 @@ class Dashboard extends CI_Controller {
 		//samundra end
 		$data['Date']=array("To"=>$todate,"From"=>$fromdate);
 		$tblName="tblorder";
-		//$data=$this->new_comman_header_different('tbl'.strtolower($tblName));
-	
-	
-		
-// 		echo $sql;
-// 		die();
+
 		$data['reportData']=$this->mm->custom_query($sql);
-// 		print_r($data['reportData']);
-// 		die();
+
         $sql="select count(OrderIdReference) as LRTotal,OrderIdReference as orderId from tblorderdetail GROUP BY OrderIdReference";
         $data['orderdetailData']=$this->mm->custom_query($sql);
         //check_p($data['orderdetailData']);
@@ -746,6 +731,73 @@ class Dashboard extends CI_Controller {
 	    
 	}
     //samundar end
+
+	public function CompaniesReportDifferent($id='')  
+	{
+		$RadioValue=$this->input->post("exampleRadios");
+		$data['pageLink']="Admin/CompaniesReportPrint";
+		$todate=$this->input->post("ToDate");
+		$fromdate=$this->input->post("FromDate");
+		$InvoiceNo=$this->input->post("InvoiceNo");
+		$InvoiceDate=$this->input->post("invoiceDate");
+		$data['InvoiceNo']=array("InvoiceNo"=>$InvoiceNo);
+		$data['InvoiceDate']=array("InvoiceDate"=>$InvoiceDate);
+		$data['InvoiceType']=$this->input->post("lr");
+		$CompanyId=$this->session->CompanyId;
+        $data['DealerData1']=array();
+		if($RadioValue=='all')
+		{
+			if($data['InvoiceType'] == 'lr'){
+				$sql="select * from ((((tblorder join tblconsignee on tblorder.ConsigneeId=tblconsignee.ConsigneeId) join 
+				tbltempo ON tblorder.TempoId=tbltempo.TempoId)join tblcompanies ON tblorder.Companies=tblcompanies.CompaniesId)join tblorderdetail on  tblorder.OrderId=tblorderdetail.
+				OrderIdReference)where  tblorder.CompanyId=$CompanyId And (tblorder.OrderDate >= '$fromdate' AND tblorder.
+				OrderDate <= '$todate') And tblorder.OrderStatus=0 order by tblorder.OrderDate";
+			}
+			else{
+				$sql="select * from (((((tblorderpallet) join tblorderpalletdetail2 on tblorderpallet.OrderpalletId = tblorderpalletdetail2.OrderpalletIdReference)join 
+				tbltempo ON tblorderpallet.TempoId=tbltempo.TempoId)join tblcompanies ON tblorderpallet.Companies=tblcompanies.CompaniesId)join tblorderpalletdetail on tblorderpallet.OrderpalletId=tblorderpalletdetail.
+				OrderpalletIdReference)where tblorderpallet.CompanyId=$CompanyId And (tblorderpallet.OrderpalletDate >= '$fromdate' AND tblorderpallet.
+				OrderpalletDate <= '$todate') And tblorderpallet.OrderpalletStatus=0 order by tblorderpallet.OrderpalletDate";
+			}
+		    $data['DealerData1']=array("CompaniesName"=>"All");
+		}
+		else
+		{
+		    $Id=$this->input->post("CompaniesId");
+		    $strPosData=strpos($Id,'-');
+            $tempoId=substr($Id,0,$strPosData);
+
+			if($data['InvoiceType'] == 'lr'){
+				$sql="select * from ((((tblorder join tblconsignee on tblorder.ConsigneeId=tblconsignee.ConsigneeId) join 
+				tbltempo ON tblorder.TempoId=tbltempo.TempoId) join tblcompanies ON tblorder.Companies=tblcompanies.CompaniesId)join tblorderdetail on  tblorder.OrderId=tblorderdetail.
+				OrderIdReference)where tblorder.Companies=$tempoId AND tblorder.CompanyId=$CompanyId And (tblorder.OrderDate 
+				>= '$fromdate' AND tblorder.OrderDate <= '$todate') And tblorder.OrderStatus=0 order by tblorder.OrderDate";
+			}
+			else{
+				$sql="select * from (((((tblorderpallet) join tblorderpalletdetail2 on tblorderpallet.OrderpalletId = tblorderpalletdetail2.OrderpalletIdReference)
+				join tbltempo ON tblorderpallet.TempoId=tbltempo.TempoId) join tblcompanies ON tblorderpallet.Companies=tblcompanies.CompaniesId)join tblorderpalletdetail on tblorderpallet.OrderpalletId=tblorderpalletdetail.
+				OrderpalletIdReference)where tblorderpallet.Companies=$tempoId AND tblorderpallet.CompanyId=$CompanyId And (tblorderpallet.OrderpalletDate 
+				>= '$fromdate' AND tblorderpallet.OrderpalletDate <= '$todate') And tblorderpallet.OrderpalletStatus=0 order by tblorderpallet.OrderpalletDate";
+			}
+		    $whereData=array("CompaniesId"=>$tempoId);
+		    $data['DealerData']=$this->mm->get_a_data("tblcompanies",$whereData);
+		}
+
+		$data['Date']=array("To"=>$todate,"From"=>$fromdate);
+		$tblName="tblorder";
+
+		$data['reportData']=$this->mm->custom_query($sql);
+
+        $sql="select count(OrderIdReference) as LRTotal,OrderIdReference as orderId from tblorderdetail GROUP BY 
+		OrderIdReference";
+        $data['orderdetailData']=$this->mm->custom_query($sql);
+		$whereData=array("CompanyId"=>$this->session->CompanyId);
+		$data['CompanyData']=$this->mm->get_a_data("tblcompany",$whereData);
+
+		$data['tableNameData']=$this->mm->get_all_table_heading();
+		$data['sidebarData']=array_map('ucfirst',str_replace('tbl','',$data['tableNameData']));
+		$this->new_comman_view_different($data);
+	}
     
 	//samundar add controller  for Dealer report data print 20-05-2021
 	public function DealerReportDifferent($id='')  
@@ -837,7 +889,7 @@ class Dashboard extends CI_Controller {
 		    
 		}
 		$data['reportData']=$this->mm->custom_query($sql);
-		//check_p($data['reportData']);
+		// check_p($data['reportData']);
 		$whereData=array("CompanyId"=>$this->session->CompanyId);
 		$data['CompanyData']=$this->mm->get_a_data("tblcompany",$whereData);
 		
@@ -2096,7 +2148,35 @@ class Dashboard extends CI_Controller {
    	}
    	//samundra end 
    	
-   	
+   	// add for companies
+	   public function CompaniesDifferent($id='')
+   	{
+   	    if(!($this->session->AdminId or $this->session->EmployeeId))
+		{
+			$this->load->view('Admin/login');
+		}
+		else
+		{
+       	   	$tblName="tblcompanies";
+    	   	$keyName="Companies";
+    	   	$data['tableName']="tblcompanies";
+    	   	$data['tblName']="companies";
+    	   	$data['pageLink']="Admin/CompaniesView";
+    	   	$data['pageName']="Companies";
+    	   	$data['page']="companies";
+
+    	    $data['Fields']=$this->mm->get_table_heading($tblName);
+ 	        $data['OriginalFields']=$data['Fields'];
+ 	        $data['ajaxSucessData']=ajax_success_data($data['OriginalFields']);
+
+            $data['mainData']=convert_object_arraY($this->mm->get_all_data_join($tblName));
+            $whereInfo['InformationInfo']=0;
+            $data['NoOfNotification']=$this->mm->count_data('tblinformation',$whereInfo);
+        	$this->new_comman_view_different($data);
+        }
+   	}
+	// 
+
    	//samundar add controller for Tempono wise report 08-08-2021
    	public function TempoReport($id='')
    	{
@@ -2135,6 +2215,33 @@ class Dashboard extends CI_Controller {
    	}
    	//samundar end
    	
+	public function CompanyReport($id='')
+   	{
+   	    if(!($this->session->AdminId or $this->session->EmployeeId))
+		{
+			$this->load->view('Admin/login');
+		}
+		else
+		{
+       	   	$tblName="tblcompanies";
+    	   	$keyName="Companies";
+    	   	$data['tableName']="tblcompanies";
+    	   	$data['tblName']="companies";
+    	   	$data['pageLink']="Admin/CompaniesReportView";
+    	   	$data['pageName']="Companies";
+    	   	$data['page']="Companies";
+    	   
+    	    $data['Fields']=$this->mm->get_table_heading($tblName);
+ 	        $data['OriginalFields']=$data['Fields'];
+ 	        $data['ajaxSucessData']=ajax_success_data($data['OriginalFields']);
+       	    
+            $data['mainData']=convert_object_arraY($this->mm->get_all_data_join($tblName));
+            $whereInfo['InformationInfo']=0;
+            $data['NoOfNotification']=$this->mm->count_data('tblinformation',$whereInfo);
+
+        	$this->new_comman_view_different($data);
+        }
+   	}
    	//samundra add controller for delare wise report 20-05-2021
    	public function DealerReport($id='') 
    	{

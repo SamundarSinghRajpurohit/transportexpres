@@ -46,6 +46,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	    $query = $this->db->get()->result();
 	    return $query;
 	}
+
+	public function get_a_selectCol($tblName,$selectedCol,$where)
+	{
+	    $this->db->select($selectedCol);
+	    $this->db->from($tblName);
+		$this->db->where($where);
+	    $query = $this->db->get()->result();
+	    return $query;
+	}
 	public function check_table_present($tblName)
 	{
 	    if ($this->db->table_exists($tblName) )
@@ -619,12 +628,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	}
 	
 	public function get_all_data_join($mainTableName)
-	{   
-	    //before
-	     //$data['fields']=remove_first_field($this->get_table_heading($mainTableName));
-	     //after
+	{
 	     $data['fields']=$this->get_table_heading($mainTableName);
-	    // echo ($mainTableName);
 	    
 	     if(check_exact_field($mainTableName,'detail'))
  	     {
@@ -637,19 +642,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  	      $data['DetailFields']=remove_last_field($data['DetailFields'],2);
  	      $columnIndex=array_search($columnName,$data['fields']);
  	      $data['fields'][$columnIndex]=ucfirst(remove("tbl",$key))."Id";
- 	      //work after merge
  	       $data['innserTblname']=check_join_table($data['DetailFields'],$InnerTableName);
- 	       //$this->db->from($key);
- 	       
- 	      //$data['fields']=array_merge($data['DetailFields'],$data['fields']);
- 	      //check_p($data);
  	     }
- 	     //  check_p($data);
     
-	     //passing main table name beacuse we need id 
 	      $data['tblname']=check_join_table($data['fields'],$mainTableName);
-	        //print_r($data['tblname']);
-	    // check_p($data);
+
 	     $select=$mainTableName.'.*';
 	    // $this->db->select($mainTableName.'.*');
 	     $this->db->select('*');
@@ -687,6 +684,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     	       }
 	        }  
  	     }
+		$this->db->where(ucFirst(remove("tbl",$mainTableName)).'Status', 0);
     	$query = $this->db->get()->result();
 	  //  print_r($query);
 	    return $query;	

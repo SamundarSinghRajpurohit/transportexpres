@@ -93,7 +93,9 @@
                                             <b>Bank Name</b> :- <?=$CompanyData[0]->CompanyBankName?><br>
                                             <b>A/C No</b> :- <?=$CompanyData[0]->CompanyAccountNo?><br>
                                             <b>IFSC CODE</b> :- <?=$CompanyData[0]->CompanyIFSCCode?><br>
-                                            <b>A/C TYPE</b> :- <?=$CompanyData[0]->CompanyAccountType?>
+                                            <b>A/C TYPE</b> :- <?=$CompanyData[0]->CompanyAccountType?><br>
+                                            <b>GST No.</b> :- <?=$CompanyData[0]->CompanyGSTno?><br>
+                                            <b>Pancard No.</b> :- <?=$CompanyData[0]->CompanyPanCartNo?>
                                         </td>
                                     </tr>
                                     </table>
@@ -176,7 +178,6 @@
                                                     $name=$name.$other[$j]['Orderpalletdetail2Name'] .' - ';
                                                     $record[$i]['secondname']=$name;    
                                                 }
-                                                
                                             }
                                         }
 
@@ -279,7 +280,9 @@
                                     <tr>
                                         <td style="border: 0;" ></td>
                                         <td style="border: 0;"></td>
-                                        <td style="border: 0;" class="float-right"><h5 class="text-right"><b>FOR,<?=$CompanyData[0]->CompanyName?></b></h5></td>
+                                        <td style="border: 0;" class="float-right"><h5 class="text-right"><b>FOR,<?=$CompanyData[0]->CompanyName?></b></h5>
+                                        <img src="<?=base_url('resources/sign.jpeg')?>" style="height:121px; width:248px;" alt="AdminLTE Logo" class=" ">
+                                        </td>
                                     </tr>
                                 </table>
                             </div>

@@ -46,6 +46,12 @@
                         <p class="inner-nav">Dealer</p>
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="<?=base_url('/Admin/CompaniesDifferent')?>" class="nav-link admin-custom-color-sidebar">
+                        <p class="inner-nav">Companies</p>
+                        </a>
+                    </li>
                 </ul>
             </span>
             <!--<span class="nav-item ">

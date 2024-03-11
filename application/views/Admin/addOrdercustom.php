@@ -65,11 +65,26 @@
                             <div class="input-group-append">
                               <span class="input-group-text FormModal" data-toggle="modal" data-target="#FormModal" name="consignee">+ Add</span>
                             </div>
-                            </div>                                                                                
-                        <div class=" form-group col-md-3" name="OrderDate"  id="OrderDatediv" >
-                            <label class=" col-md-12"  >Date</label> 
-                            <input type="date" class="form-control col-md-12" name="OrderDate"  id="OrderDate"  value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderDate:date('Y-m-d');?>" >
-                        </div>
+                        </div>                                                                                
+
+                        <!-- company name -->
+                        <div class=" input-group form-group col-md-3" name="CompaniesId" id="Companiesdiv" >
+                            <label class=" col-md-12"  >Companies Name</label>  
+                            <?php
+                                $CompaniesName="";
+                                if(isset($OrderData[0]->Companies) && $OrderData[0]->Companies !=""){
+                                  $CompaniesData = getCompaniesData($OrderData[0]->Companies);
+
+                                  if(!empty($CompaniesData)){
+                                    $CompaniesName = $OrderData[0]->Companies.'-'.$CompaniesData[0]->CompaniesName;
+                                  }
+                                }
+                            ?>
+                            <input type="text" class="form-control col-md-12 datalist" list="companieslist" name="CompaniesId" id="CompaniesId" value="<?=$CompaniesName ?>">
+                            <datalist id="companieslist">
+                            </datalist>
+                        </div> 
+                        <!--  -->
                         
                         <div class=" input-group form-group col-md-3" name="TempoId"  id="TempoIddiv" >
                             <label class=" col-md-12"  >Tempo No</label> 
@@ -84,6 +99,12 @@
                             <label class=" col-md-12"  >Address</label> 
                             <textarea  class="form-control col-md-12 " name="OrderAddress" id="OrderAddress"><?=(isset($OrderData[0]))?$OrderData[0]->OrderAddress:' '?></textarea>
                         </div>
+
+                        <div class=" form-group col-md-3" name="OrderDate"  id="OrderDatediv" >
+                            <label class=" col-md-12"  >Date</label> 
+                            <input type="date" class="form-control col-md-12" name="OrderDate"  id="OrderDate"  value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderDate:date('Y-m-d');?>" >
+                        </div>
+
                         <div class=" input-group form-group col-md-2" name="OrderFrom"  id="OrderFromdiv" >
                         <label class=" col-md-12"  >From</label> 
                             <input type="text" class="form-control col-md-12 " list="From" name="OrderFrom"  id="OrderFrom"  value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderFrom:' ' ?>">

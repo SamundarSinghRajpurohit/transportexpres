@@ -503,7 +503,7 @@ class Ajax extends CI_Controller {
 		$comId=$this->session->CompanyId;
 		$tableName1=$tblname;
 		$tableName = preg_replace('/[0-9]+/', '', $tableName1);
-		//print_r($tableName);
+
 		$key=ucfirst(str_replace("tbl","",$tableName));
 		$keyname=$key."Name";
 		$textBoxValue=$value;
@@ -517,11 +517,10 @@ class Ajax extends CI_Controller {
 		{
 		    $getColumn="*";
 		    $whereData=array($tableName.'.CompanyId'=>$comId);
-		   // print_r($whereData);
     		$allData=$this->mm->get_a_data($tableName,$whereData);
 		    
 		}
-		//print_r($allData);
+		// check_p($allData);
         //$suggestedData['SuggestedProduct']=$allData;
        //$data[]="<datalist id='shop_ids'>";
        $data=array();
@@ -529,15 +528,10 @@ class Ajax extends CI_Controller {
        {
            $data[]=($allData[$i][$key.'Id']."-".$allData[$i][$key."Name"]);
        }
-        //$data[]="</datalist>";
-        //print_r($data);
-        echo  json_encode($data);
-        /*$tableIdName='DealerId';
-        $jsonData[0]=get_array_for_datalist(convert_object_array($allData[0]),$tableIdName);
-        print_r($jsonData[0]);*/
-			
+        echo  json_encode($data);	
 	}
 	//end samundar
+
 	//samundar add search new api for mediapp 17-03-2021
 	public function searchNew()
 	{
@@ -7059,8 +7053,6 @@ class Ajax extends CI_Controller {
 	//kd 2/9/2021 devi motors 
 	public function get_a_data($tblName,$id,$tagName='',$key='',$uniqueId='')
 	{
-	       
-	        
             $tableIdName=ucfirst(remove("tbl",$tblName)."Id");
             $whereData=array($tblName.".".$tableIdName=>$id);
 	        $arrayData=array();
@@ -7401,634 +7393,505 @@ class Ajax extends CI_Controller {
 	            return $dataTableField;
 	        }
 	public function insert_data($name = '',$detailArray='')  //inserting a data in table
-	{      
-	        $colName=strtolower($name);
-	        $tblName="tbl".$colName; 
-	        //  echo $colName;
-	        //  die();
-	        $tableField=$this->mm->get_table_heading($tblName);
-	        $tableField=remove_last_field($tableField,2);
-	        /*echo $tblName; 
-	        die();*/
-	        // $tableField=remove_first_field($tableField);
-	        $dataTableField=array();
-	        $lastInsertId;
-	        $dataTableField=$this->insert_data_function($tableField);
-	       // print_r($dataTableField);
-	        $dataTableField[ucfirst($name."CDT")]=date('Y-m-d H:i:s');
-	        $dataTableField[ucfirst($name."Status")]=0;
-			if(isset($this->session->CompanyId)){
-				$dataTableField["CompanyId"]=$this->session->CompanyId;
-			//	$dataTableField["OrderYear"]=$this->session->LoginYear;
-			}
-			
-			else{
-			//	$dataTableField["CompanyId"]=$this->session->CompanyId;	
-			}
-			
-			//samundar add code for company profile update 24-04-2021
-			if($colName=='company' && empty($dataTableField["CompanyCode"]))
-	        {
-				$a=$dataTableField['CompanyId'];
-                $lrdata=$this->mm->custom_query("SELECT CompanyCode FROM tblcompany where CompanyId=$a");
-				$dataTableField["CompanyCode"]=$lrdata[0]['CompanyCode'];
-			}
-			
-			
-	        //kd  insert in  all going  wrong  please change 3/28/2021
-	        if($colName=='product')
-	        {
-    	      $a=$dataTableField['CompanyId'];
-    	       if(strpos($a,'-')!==false)
-    	       {
-    	          // echo "false".$a;
-    	       }
-    	       else
-    	       {
-    	           
-    	           $tableField1=$this->mm->get_table_heading('tblcompany');
-    	           $tableField1=remove_last_field($tableField,2);
-    	            $dataTableField1["CompanyName"]=$a;
-    	           $dataTableField1[ucfirst('Company'."CDT")]=date('Y-m-d H:i:s');
-    	           $dataTableField1[ucfirst('Company'."Status")]=0;
-    	           $lastInsertId1=$this->mm->insert_data('tblcompany',$dataTableField1);
-    	           $demo=$lastInsertId1.'-'.$a;
-    	           $dataTableField['CompanyId']=$demo;
-    	       }
-	        }
-	        else if($colName=='order')
-	        {
-	               $cid=$dataTableField["CompanyId"];
-	               //echo "=============".$cid;
-    	           $lrdata=$this->mm->custom_query("SELECT MAX(OrderLRNO) AS LastLrno FROM tblorder where CompanyId=$cid");
-    	           //print_r($lrdata);
-    	           if($lrdata[0]['LastLrno'] == NULL)
-    	           {
-    	               $dataTableField['OrderLRNO']=1;
-    	           }
-    	           else
-    	           {
-    	               $dataTableField['OrderLRNO']=$lrdata[0]['LastLrno'] + 1;
-    	           }
-	        }
-	        else if($colName=='orderpallet')
-	        {
-	               $cid=$dataTableField["CompanyId"];
-	               //echo "=============".$cid;
-    	           $lrdata=$this->mm->custom_query("SELECT MAX(OrderpalletLRNOauto) AS LastLrno FROM tblorderpallet where CompanyId=$cid");
-    	           //print_r($lrdata);
-    	           if($lrdata[0]['LastLrno'] == NULL)
-    	           {
-    	               $dataTableField['OrderpalletLRNOauto']=1;
-    	           }
-    	           else
-    	           {
-    	               $dataTableField['OrderpalletLRNOauto']=$lrdata[0]['LastLrno'] + 1;
-    	           }
-	        }
-	       //print_r($dataTableField);
-	       //die();
-	       //samundar end
-	       if($this->input->post($tableField[0])!=NULL)
-	       { //UPDATE DATA
-              //  echo "Update Data";
-              //check_p($this->input->post($tableField[0]));
-                //check_p($dataTableField);
-                $data=$this->mm->update_data($tblName,$dataTableField,$tableField[0],$this->input->post($tableField[0]));
-	            $lastInsertId=$this->input->post($tableField[0]);
-	            $tableDetailName='tbl'.$name.'detail';
-                $tablePresent=$this->mm->check_table_present($tableDetailName);
-               // check_p($tablePresent);
-                if ($tablePresent)
-                {
-                    //check_p($tableDetailName);
-                    $detailArray=explode(',',($_POST['DetailArray']));
-	                $tableField=$this->mm->get_table_heading($tableDetailName);
-            	    //check_p($detailArray);
-            	    $tableField=remove_last_field($tableField,2);
-            	    $multiData=array();     
-					$dataTableWhere=array();
-					$dataTableNewField=array();
-					$dataTableField=array();
-					$insertNewData=array();
-					
-	                foreach($detailArray as $value)
-	                {
-	                  
-            	        $dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId,$tableDetailName);
-						
-						//$dataTableWhere[ucfirst($name.'detailId')]=$this->input->post($name.'detailId');
-						// $dataTableField[ucfirst($name."detail"."CDT")]=date('Y-m-d H:i:s');
-            	      //  $dataTableField[ucfirst($name."detail"."Status")]=0;
-            	         /*print_r($dataTableField);
-	                    echo $this->input->post($tableField[0]);
-	                    die();*/
-            	        //$data=$this->mm->insert_data($tableDetailName,$dataTableField);
-            	        //echo $data;
-                        //samundra add update total in order table code 14-05-2021
-           
-                        //samundra end
-                    
-						if( $tableDetailName !='tblorderpalletdetail' && $dataTableField[ucfirst($name.'detailId')] == '' && $dataTableField[ucfirst($name.'detailProductName')] != '')
-			        		array_push($insertNewData,$dataTableField);
-						else
-							array_push($multiData,$dataTableField);
-						//array_push($whereUpdateData,$dataTableWhere);
-	                }
-	                //samundar add for order table update 02-06-2012
-	                $totalBox=0;
-					$totalWeight=0;
-	                if($tableDetailName=='tblorderdetail')
-					{	
-						for($i=0;$i<count($multiData);$i++)
-						{
-							if(($multiData[$i]['OrderdetailProductName']==''))
-							{
-								unset($multiData[$i]);
+	{
+		$colName=strtolower($name);
+		$tblName="tbl".$colName; 
 
-							}
-							else{
-							
-							if($multiData[$i]['OrderdetailBox'] == '')
-							{
-								$multiData[$i]['OrderdetailBox'] = 0;
-							}
-							if($multiData[$i]['OrderdetailWeight'] == '')
-							{
-								$multiData[$i]['OrderdetailWeight'] = 0;
-							}
+		$tableField=$this->mm->get_table_heading($tblName);
+		$tableField=remove_last_field($tableField,2);
 
-							$totalBox=$totalBox +((int)$multiData[$i]['OrderdetailBox']);
-							$totalWeight=$totalWeight +($multiData[$i]['OrderdetailWeight']);
-							// $multiData[$i]['OrderpalletdetailTotal']=$totalPalletAmount;
-							
-							$arr[$i]['OrderdetailId']=$multiData[$i]['OrderdetailId'];
-							$arr[$i]['OrderIdReference']=$multiData[$i]['OrderIdReference'];
-							// $arr[$i]['OrderpalletdetailQty']=$multiData[$i]['OrderpalletdetailQty'];
-							$arr[$i]['OrderdetailProductName']=$multiData[$i]['OrderdetailProductName'];
-							$arr[$i]['OrderdetailBox']=$multiData[$i]['OrderdetailBox'];
-							$arr[$i]['OrderdetailName']=$multiData[$i]['OrderdetailName'];
-							$arr[$i]['OrderdetailWeight']=$multiData[$i]['OrderdetailWeight'];
-							$arr[$i]['OrderdetailDcpiNo']=$multiData[$i]['OrderdetailDcpiNo'];
-				// 			$arr[$i]['OrderdetailCDT']=$multiData[$i]['OrderdetailCDT'];
-				// 			$arr[$i]['OrderdetailStatus']=$multiData[$i]['OrderdetailStatus'];
-							}
-							
-						}
-						
-						//samundar add for order table update
-						$id=$multiData[0]['OrderIdReference'];
-                		$lrdata=$this->mm->custom_query("SELECT * FROM tblorder where OrderId=$id");
-						// $totbox=$totalBox;
-						// $totweight=$totalWeight;
-						// if($lrdata[0]['OrderHamali']='')
-						// {
-						// 	$lrdata[0]['OrderHamali']=0;
-						// }
-						// if($lrdata[0]['OrderFreight']='')
-						// {
-						// 	$lrdata[0]['OrderFreight']=0;
-						// }
-						//check_p($lrdata);
-						$orderTotal=0;
-						if($lrdata[0]['OrderRateDropDown']=='Weight')
-						{
-							$orderTotal=($totalWeight * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight']; 
-						}
-						else
-						{
-							$orderTotal=($totalBox * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight'];
-						}
-						//$dataTableField["CompanyCode"]=$lrdata[0]['CompanyCode'];
-						// echo $orderTotal;
-						//  die();
-						$tblname1='tblorder';
-	            		$whereData1=array(  
-    					'OrderId'=>$multiData[0]['OrderIdReference'],
-						);
-						$mainData1=array(
-				       		'OrderTotalBoxes'=>$totalBox,
-							'OrderTotalWeight'=>$totalWeight,
-							'OrderTotal'=>$orderTotal,
-							'OrderYear'=>$this->session->LoginYear,
-					 	);
-        				$data1['Data']=$this->mm->update_data_api($tblname1,$mainData1,$whereData1);
-						//samundar end
-						
-					}
+		$dataTableField=array();
+		$lastInsertId;
+		$dataTableField=$this->insert_data_function($tableField);
+
+		$dataTableField[ucfirst($name."CDT")]=date('Y-m-d H:i:s');
+		$dataTableField[ucfirst($name."Status")]=0;
+		if(isset($this->session->CompanyId)){
+			$dataTableField["CompanyId"]=$this->session->CompanyId;
+		}
+		
+		else{
+		//	$dataTableField["CompanyId"]=$this->session->CompanyId;	
+		}
+		
+		//samundar add code for company profile update 24-04-2021
+		if($colName=='company' && empty($dataTableField["CompanyCode"]))
+		{
+			$a=$dataTableField['CompanyId'];
+			$lrdata=$this->mm->custom_query("SELECT CompanyCode FROM tblcompany where CompanyId=$a");
+			$dataTableField["CompanyCode"]=$lrdata[0]['CompanyCode'];
+		}
+		
+		
+		//kd  insert in  all going  wrong  please change 3/28/2021
+		if($colName=='product')
+		{
+			$a=$dataTableField['CompanyId'];
+			if(strpos($a,'-')!==false)
+			{
+				// echo "false".$a;
+			}
+			else
+			{
+				
+				$tableField1=$this->mm->get_table_heading('tblcompany');
+				$tableField1=remove_last_field($tableField,2);
+				$dataTableField1["CompanyName"]=$a;
+				$dataTableField1[ucfirst('Company'."CDT")]=date('Y-m-d H:i:s');
+				$dataTableField1[ucfirst('Company'."Status")]=0;
+				$lastInsertId1=$this->mm->insert_data('tblcompany',$dataTableField1);
+				$demo=$lastInsertId1.'-'.$a;
+				$dataTableField['CompanyId']=$demo;
+			}
+		}
+		else if($colName=='order')
+		{
+			$dataTableField['Companies'] = strstr($_POST["CompaniesId"], '-', true);
+
+			$cid=$dataTableField["CompanyId"];
+			//echo "=============".$cid;
+			$lrdata=$this->mm->custom_query("SELECT MAX(OrderLRNO) AS LastLrno FROM tblorder where CompanyId=$cid");
+			//print_r($lrdata);
+			if($lrdata[0]['LastLrno'] == NULL)
+			{
+				$dataTableField['OrderLRNO']=1;
+			}
+			else
+			{
+				$dataTableField['OrderLRNO']=$lrdata[0]['LastLrno'] + 1;
+			}
+		}
+		else if($colName=='orderpallet')
+		{
+			$dataTableField['Companies'] = strstr($_POST["CompaniesId"], '-', true);
+			$cid=$dataTableField["CompanyId"];
+			//echo "=============".$cid;
+			$lrdata=$this->mm->custom_query("SELECT MAX(OrderpalletLRNOauto) AS LastLrno FROM tblorderpallet where CompanyId=$cid");
+			//print_r($lrdata);
+			if($lrdata[0]['LastLrno'] == NULL)
+			{
+				$dataTableField['OrderpalletLRNOauto']=1;
+			}
+			else
+			{
+				$dataTableField['OrderpalletLRNOauto']=$lrdata[0]['LastLrno'] + 1;
+			}
+		}
+
+		//samundar end
+		if($this->input->post($tableField[0])!=NULL)
+		{
+			$data=$this->mm->update_data($tblName,$dataTableField,$tableField[0],$this->input->post($tableField[0]));
+			$lastInsertId=$this->input->post($tableField[0]);
+			$tableDetailName='tbl'.$name.'detail';
+			$tablePresent=$this->mm->check_table_present($tableDetailName);
+
+			if ($tablePresent)
+			{
+
+				$detailArray=explode(',',($_POST['DetailArray']));
+				$tableField=$this->mm->get_table_heading($tableDetailName);
+
+				$tableField=remove_last_field($tableField,2);
+				$multiData=array();     
+				$dataTableWhere=array();
+				$dataTableNewField=array();
+				$dataTableField=array();
+				$insertNewData=array();
+				
+				foreach($detailArray as $value)
+				{
 					
-					if($tableDetailName=='tblorderpalletdetail')
-					{	//$k=0;
-					    $totalPalletQty=0;
-						for($i=0;$i<count($multiData);$i++)
-						{
-							if(($multiData[$i]['OrderpalletdetailId']==''))
-							{
-								unset($multiData[$i]);
-							}
-							else
-							{
-    							$totalPalletAmount=0;
-    							//$data2['Data']=array();
-    							$totalPalletAmount=$totalPalletAmount +($multiData[$i]['OrderpalletdetailQty'] *  $multiData[$i]['OrderpalletdetailRate']);
-    							$totalPalletQty=$totalPalletQty +($multiData[$i]['OrderpalletdetailQty']);
-    							$multiData[$i]['OrderpalletdetailTotal']=$totalPalletAmount;
-    				// 			$tblname1='tblorderpalletdetail';
-        // 	            		$whereData1=array(  
-        //     					'OrderpalletdetailId'=>$multiData[$i]['OrderpalletdetailId'],
-        // 						);
-        // 						$mainData1=array(
-        // 				       		'OrderpalletdetailTotal'=>$totalPalletAmount,
-        // 					 	);
-        //         				$data2['Data']=$this->mm->update_data_api($tblname1,$mainData1,$whereData1);
-							}
-						}
-						$tblname='tblorderpallet';
-	                    $updateData=array(  
-    					'OrderpalletTotalQty'=>$totalPalletQty,
-                		); 
-        		        $where=array(  
-    					    'OrderpalletId'=>$multiData[0]['OrderpalletIdReference']
-        		        ); 
-        		        $OrderpalletInsertId1=$this->mm->update_data_api($tblname,$updateData,$where);
-					}
-	                //samundar end
-				   	//check_p($multiData);
-	   //             check_p($insertNewData);
-	                if(!empty($multiData))
-					    $data=$this->mm->update_multiple_data($tableDetailName,$multiData,ucfirst($name.'detailId'));
-					if(!empty($insertNewData))
-	                    $data=$this->mm->insert_multiple_data($tableDetailName,$insertNewData);
-	           }
-	            
-	            //samundar add for update detail2 table in orderpalletdetail2 02-06-2021\
-	            $tableDetailName1='tbl'.$name.'detail2';
-                $tablePresent=$this->mm->check_table_present($tableDetailName1);
-               // check_p($tablePresent);
-                if ($tablePresent)
-                {
-                    //check_p($tableDetailName);
-                    $detailArray=explode(',',($_POST['DetailArray2']));
-	                $tableField=$this->mm->get_table_heading($tableDetailName1);
-            	    //check_p($detailArray);
-            	    $tableField=remove_last_field($tableField,2);
-            	    $multiData=array();     
-					$dataTableWhere=array();
-					$dataTableNewField=array();
-					$dataTableField=array();
-					$insertNewData=array();
-					
-	                foreach($detailArray as $value)
-	                {
-            	        $dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId,$tableDetailName);
-					
-						if( $tableDetailName1 =='tblorderpalletdetail2' && $dataTableField[ucfirst($name.'detail2Name')] != '')
-			        		array_push($multiData,$dataTableField);
-						else
-							array_push($insertNewData,$dataTableField);
-						//array_push($whereUpdateData,$dataTableWhere);
-	                }
-	               //echo "=======".$name."======";
-				   	//print_r($multiData);
-	                //check_p($multiData);
-	                if(!empty($multiData))
-					    $data=$this->mm->update_multiple_data($tableDetailName1,$multiData,ucfirst($name.'detail2Id'));
-				// 	if(!empty($insertNewData))
-	   //                 $data=$this->mm->insert_multiple_data($tableDetailName1,$insertNewData);
-	           }
-	            //samundar end
-	           
-	       }
-	       else
-	       { 
-                //kd double entery for accounts
-                $accountsCrKey=array("dealer");
-				//$accountsDrKey=array("consignor","consignee");
-				//old
-				//if((strcmp($tblName,"tblvendor"))==0)
-                //new
-				// if(in_array($name,$accountsCrKey))
-				// {
-    //                 $keyName=ucfirst($name)."Name";
-    //                 $accountsData["GroupId"]=SUNDRY_CR;
-    //                 $accountsData["AccountsName"]=$this->input->post($keyName);
-    //                 $accountsData["CompanyId"]=$this->session->CompanyId;
-    //                 $AccountlastInsertId=$this->mm->insert_data("tblaccounts",$accountsData);
-    //                 $dataTableField["AccountsId"]=$AccountlastInsertId;
-                    
-    //             }
-			
-                $lastInsertId=$this->mm->insert_data($tblName,$dataTableField);
-                //samundar 27-02-2021
-                if((strcmp($tblName,"tblpurchase"))==0)
-                {
-                    
-                    $inventoryData["InventorytransactionBillNo"]=$lastInsertId;
-                    $inventoryData["InventorytransactionTypeDropDown"]="Purchase";
-                    $inventoryData["InventorytransactionTag"]="Purchase Good";
-                    $inventoryData["InventorytransactionDate"]=date('Y-m-d H:i:s');
-                    $inventoryData["InventorytransactionStatus"]=0;
-                    $inventoryData["InventorytransactionCDT"]=date('Y-m-d H:i:s');
-                    //
-                    $detailArray=explode(',',($_POST['DetailArray']));
-	                $tableField=$this->mm->get_table_heading('tblpurchasedetail');
-            	    //check_p($detailArray);
-            	    $tableField=remove_last_field($tableField,2);
-            	    $multiData=array();     
-	                foreach($detailArray as $value)
-	                {
-	                    $dataTableField=array();
-            	        $dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId);
-            	        $dataTableField[ucfirst($name."detail"."CDT")]=date('Y-m-d H:i:s');
-            	        $dataTableField[ucfirst($name."detail"."Status")]=0;
-            	        //$data=$this->mm->insert_data($tableDetailName,$dataTableField);
-            	       
-            	        array_push($multiData,$dataTableField);
-	                  //   print_r($data)
-	                    
-	                }
-	               foreach($multiData[0] as $key=>$value)
-	                {
-	                    //print_r($key);
-	                    if((strcmp($key,"ProductId"))==0)
-	                    {
-	                         $pos1=strpos($value,"-");
-	                         $sub1=substr($value,0,$pos1);
-	                        $inventoryData["ProductId"]=$sub1;
-	                    }
-	                    else if((strcmp($key,"PurchaseProductQty"))==0)
-	                    {
-	                        $inventoryData["InventorytransactionProductQty"]=$value;
-	                    }
-	                }
-	                //check_p($inventoryData);
-	               
-                    //
-                    $AccountlastInsertId=$this->mm->insert_data("tblinventorytransaction",$inventoryData);
-                    
-                }
-                //samundar end
-                
-                
-               // echo $lastInsertId;
-                $tableDetailName='tbl'.$name.'detail';
-                $tablePresent=$this->mm->check_table_present($tableDetailName);
-				// echo $tableDetailName;
-				// die();
-				// check_p($tablePresent);
-                if ($tablePresent)
-                {
-                  //  check_p($lastInsertId);
-                    $detailArray=explode(',',($_POST['DetailArray']));
-	                $tableField=$this->mm->get_table_heading($tableDetailName);
-            	    
-            	    $tableField=remove_last_field($tableField,2);
-            	    //check_p($detailArray);
-            	    $multiData=array();     
-	                foreach($detailArray as $value)
-	                {
-	                    $dataTableField=array();
-            	        $dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId);
-            	        $dataTableField[ucfirst($name."detail"."CDT")]=date('Y-m-d H:i:s');
-            	        $dataTableField[ucfirst($name."detail"."Status")]=0;
-            	        //samundar add for if product is not in database then create a new product 05-04-2021
-            	        //check_p($dataTableField);
+					$dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId,$tableDetailName);
+					//samundra end
+				
+					if( $tableDetailName !='tblorderpalletdetail' && $dataTableField[ucfirst($name.'detailId')] == '' && $dataTableField[ucfirst($name.'detailProductName')] != '')
+						array_push($insertNewData,$dataTableField);
+					else
 						array_push($multiData,$dataTableField);
-            	       if(isset($dataTableField['ProductId']))
-					   {
-						$productId=$dataTableField['ProductId'];
-					   }
-					   else{
-						$productId='';
-					   }
-						
-            	      /* echo $productId;
-            	       die();*/
-						if($productId!='')
+				}
+				//samundar add for order table update 02-06-2012
+				$totalBox=0;
+				$totalWeight=0;
+				if($tableDetailName=='tblorderdetail')
+				{	
+					for($i=0;$i<count($multiData);$i++)
+					{
+						if(($multiData[$i]['OrderdetailProductName']==''))
 						{
-							if(strpos($productId,'-')!==false)
-							{
-								// echo "false".$productId;
-							}
-							else
-							{
-								
-								$tableField1=$this->mm->get_table_heading('tblproduct');
-								$tableField1=remove_last_field($tableField,2);
-								$dataTableField1["ProductName"]=$productId;
-								$dataTableField1["CompanyId"]=$this->session->CompanyId;
-								//$dataTableField1["SubcategoryId"]=14;
-								// $dataTableField1["ProductImages"]='no_img.jpg';
-								$dataTableField1[ucfirst('Product'."CDT")]=date('Y-m-d H:i:s');
-								$dataTableField1[ucfirst('Product'."Status")]=0;
-								$lastInsertId1=$this->mm->insert_data('tblproduct',$dataTableField1);
-								$demo=$lastInsertId1.'-'.$productId;
-								$dataTableField['ProductId']=$demo;
-							}
-								//samundar end
-								//$data=$this->mm->insert_data($tableDetailName,$dataTableField);
-							
-							
-								//array_push($multiData,$dataTableField);
+							unset($multiData[$i]);
+
 						}
-								//   print_r($data)
-	                    
-	                } 
-					$arr=array();
-	                //create array for store orderpalletqty 04-05-2021
-	                $pQty=array();
-	                //samundar end
-	                //check_p($multiData);
-					if($tableDetailName=='tblorderpalletdetail')
-					{	//$k=0;
-					    $totalPalletQty=0;
-						for($i=0;$i<count($multiData);$i++)
+						else{
+						
+						if($multiData[$i]['OrderdetailBox'] == '')
 						{
-							if(($multiData[$i]['OrderpalletdetailQty']=='') || ($multiData[$i]['OrderpalletdetailRate']==''))
-							{
-								unset($multiData[$i]);
-							}
-							else{
-							
+							$multiData[$i]['OrderdetailBox'] = 0;
+						}
+						if($multiData[$i]['OrderdetailWeight'] == '')
+						{
+							$multiData[$i]['OrderdetailWeight'] = 0;
+						}
+
+						$totalBox=$totalBox +((int)$multiData[$i]['OrderdetailBox']);
+						$totalWeight=$totalWeight +($multiData[$i]['OrderdetailWeight']);
+						
+						$arr[$i]['OrderdetailId']=$multiData[$i]['OrderdetailId'];
+						$arr[$i]['OrderIdReference']=$multiData[$i]['OrderIdReference'];
+						$arr[$i]['OrderdetailProductName']=$multiData[$i]['OrderdetailProductName'];
+						$arr[$i]['OrderdetailBox']=$multiData[$i]['OrderdetailBox'];
+						$arr[$i]['OrderdetailName']=$multiData[$i]['OrderdetailName'];
+						$arr[$i]['OrderdetailWeight']=$multiData[$i]['OrderdetailWeight'];
+						$arr[$i]['OrderdetailDcpiNo']=$multiData[$i]['OrderdetailDcpiNo'];
+						}
+						
+					}
+					
+					//samundar add for order table update
+					$id=$multiData[0]['OrderIdReference'];
+					$lrdata=$this->mm->custom_query("SELECT * FROM tblorder where OrderId=$id");
+
+					$orderTotal=0;
+					if($lrdata[0]['OrderRateDropDown']=='Weight')
+					{
+						$orderTotal=($totalWeight * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight']; 
+					}
+					else
+					{
+						$orderTotal=($totalBox * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight'];
+					}
+
+					$tblname1='tblorder';
+					$whereData1=array(  
+					'OrderId'=>$multiData[0]['OrderIdReference'],
+					);
+					$mainData1=array(
+						'OrderTotalBoxes'=>$totalBox,
+						'OrderTotalWeight'=>$totalWeight,
+						'OrderTotal'=>$orderTotal,
+						'OrderYear'=>$this->session->LoginYear,
+					);
+					$data1['Data']=$this->mm->update_data_api($tblname1,$mainData1,$whereData1);
+				}
+				
+				if($tableDetailName=='tblorderpalletdetail')
+				{	//$k=0;
+					$totalPalletQty=0;
+					for($i=0;$i<count($multiData);$i++)
+					{
+						if(($multiData[$i]['OrderpalletdetailId']==''))
+						{
+							unset($multiData[$i]);
+						}
+						else
+						{
 							$totalPalletAmount=0;
+							//$data2['Data']=array();
 							$totalPalletAmount=$totalPalletAmount +($multiData[$i]['OrderpalletdetailQty'] *  $multiData[$i]['OrderpalletdetailRate']);
 							$totalPalletQty=$totalPalletQty +($multiData[$i]['OrderpalletdetailQty']);
 							$multiData[$i]['OrderpalletdetailTotal']=$totalPalletAmount;
-							//$k++;
-							$arr[$i]['OrderpalletdetailId']=$multiData[$i]['OrderpalletdetailId'];
-							$arr[$i]['OrderpalletIdReference']=$multiData[$i]['OrderpalletIdReference'];
-							$arr[$i]['OrderpalletdetailQty']=$multiData[$i]['OrderpalletdetailQty'];
-							$arr[$i]['OrderpalletdetailRate']=$multiData[$i]['OrderpalletdetailRate'];
-							$arr[$i]['OrderpalletdetailTotal']=$multiData[$i]['OrderpalletdetailTotal'];
-							$arr[$i]['OrderpalletdetailCDT']=$multiData[$i]['OrderpalletdetailCDT'];
-							$arr[$i]['OrderpalletdetailStatus']=$multiData[$i]['OrderpalletdetailStatus'];
-							}
-							
 						}
-						$tblname='tblorderpallet';
-	                    $updateData=array(  
-    					'OrderpalletTotalQty'=>$totalPalletQty,
-                		); 
-        		        $where=array(  
-    					    'OrderpalletId'=>$multiData[0]['OrderpalletIdReference']
-        		        ); 
-        		        $OrderpalletInsertId1=$this->mm->update_data_api($tblname,$updateData,$where);
-						
 					}
-					
-					$totalBox=0;
-					$totalWeight=0;
-					if($tableDetailName=='tblorderdetail')
-					{	
-						for($i=0;$i<count($multiData);$i++)
-						{
-							if(($multiData[$i]['OrderdetailProductName']==''))
-							{
-								unset($multiData[$i]);
-
-							}
-							else{
-							
-							if($multiData[$i]['OrderdetailBox'] == '')
-							{
-								$multiData[$i]['OrderdetailBox'] = 0;
-							}
-							if($multiData[$i]['OrderdetailWeight'] == '')
-							{
-								$multiData[$i]['OrderdetailWeight'] = 0;
-							}
-
-							$totalBox=$totalBox +((int)$multiData[$i]['OrderdetailBox']);
-							$totalWeight=$totalWeight +($multiData[$i]['OrderdetailWeight']);
-							// $multiData[$i]['OrderpalletdetailTotal']=$totalPalletAmount;
-							
-							$arr[$i]['OrderdetailId']=$multiData[$i]['OrderdetailId'];
-							$arr[$i]['OrderIdReference']=$multiData[$i]['OrderIdReference'];
-							// $arr[$i]['OrderpalletdetailQty']=$multiData[$i]['OrderpalletdetailQty'];
-							$arr[$i]['OrderdetailProductName']=$multiData[$i]['OrderdetailProductName'];
-							$arr[$i]['OrderdetailBox']=$multiData[$i]['OrderdetailBox'];
-							$arr[$i]['OrderdetailName']=$multiData[$i]['OrderdetailName'];
-							$arr[$i]['OrderdetailWeight']=$multiData[$i]['OrderdetailWeight'];
-							$arr[$i]['OrderdetailDcpiNo']=$multiData[$i]['OrderdetailDcpiNo'];
-							$arr[$i]['OrderdetailCDT']=$multiData[$i]['OrderdetailCDT'];
-							$arr[$i]['OrderdetailStatus']=$multiData[$i]['OrderdetailStatus'];
-							}
-							
-						}
-						
-					}
-					// echo $totalBox;
-					// echo "========"; 
-					// echo $totalWeight;
-					// die();
+					$tblname='tblorderpallet';
+					$updateData=array(  
+					'OrderpalletTotalQty'=>$totalPalletQty,
+					); 
+					$where=array(  
+						'OrderpalletId'=>$multiData[0]['OrderpalletIdReference']
+					); 
+					$OrderpalletInsertId1=$this->mm->update_data_api($tblname,$updateData,$where);
+				}
+				if(!empty($multiData))
+					$data=$this->mm->update_multiple_data($tableDetailName,$multiData,ucfirst($name.'detailId'));
+				if(!empty($insertNewData))
+					$data=$this->mm->insert_multiple_data($tableDetailName,$insertNewData);
+			}
+			
+			//samundar add for update detail2 table in orderpalletdetail2 02-06-2021\
+			$tableDetailName1='tbl'.$name.'detail2';
+			$tablePresent=$this->mm->check_table_present($tableDetailName1);
+			// check_p($tablePresent);
+			if ($tablePresent)
+			{
+				//check_p($tableDetailName);
+				$detailArray=explode(',',($_POST['DetailArray2']));
+				$tableField=$this->mm->get_table_heading($tableDetailName1);
+				//check_p($detailArray);
+				$tableField=remove_last_field($tableField,2);
+				$multiData=array();     
+				$dataTableWhere=array();
+				$dataTableNewField=array();
+				$dataTableField=array();
+				$insertNewData=array();
 				
+				foreach($detailArray as $value)
+				{
+					$dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId,$tableDetailName);
+				
+					if( $tableDetailName1 =='tblorderpalletdetail2' && $dataTableField[ucfirst($name.'detail2Name')] != '')
+						array_push($multiData,$dataTableField);
+					else
+						array_push($insertNewData,$dataTableField);
+				}
+				if(!empty($multiData))
+					$data=$this->mm->update_multiple_data($tableDetailName1,$multiData,ucfirst($name.'detail2Id'));
+			}
+			//samundar end
+		}
+		else
+		{ 
+			//kd double entery for accounts
+			$accountsCrKey=array("dealer");
+			// check_p($dataTableField);
+			$lastInsertId=$this->mm->insert_data($tblName,$dataTableField);
 
-					if($tableDetailName=='tblorderpalletdetail' || $tableDetailName=='tblorderdetail')
+			if((strcmp($tblName,"tblpurchase"))==0)
+			{
+				
+				$inventoryData["InventorytransactionBillNo"]=$lastInsertId;
+				$inventoryData["InventorytransactionTypeDropDown"]="Purchase";
+				$inventoryData["InventorytransactionTag"]="Purchase Good";
+				$inventoryData["InventorytransactionDate"]=date('Y-m-d H:i:s');
+				$inventoryData["InventorytransactionStatus"]=0;
+				$inventoryData["InventorytransactionCDT"]=date('Y-m-d H:i:s');
+				//
+				$detailArray=explode(',',($_POST['DetailArray']));
+				$tableField=$this->mm->get_table_heading('tblpurchasedetail');
+				//check_p($detailArray);
+				$tableField=remove_last_field($tableField,2);
+				$multiData=array();     
+				foreach($detailArray as $value)
+				{
+					$dataTableField=array();
+					$dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId);
+					$dataTableField[ucfirst($name."detail"."CDT")]=date('Y-m-d H:i:s');
+					$dataTableField[ucfirst($name."detail"."Status")]=0;
+					//$data=$this->mm->insert_data($tableDetailName,$dataTableField);
+					
+					array_push($multiData,$dataTableField);
+					//   print_r($data)
+					
+				}
+				foreach($multiData[0] as $key=>$value)
+				{
+					//print_r($key);
+					if((strcmp($key,"ProductId"))==0)
 					{
-						$data=$this->mm->insert_multiple_data($tableDetailName,$arr);
+							$pos1=strpos($value,"-");
+							$sub1=substr($value,0,$pos1);
+						$inventoryData["ProductId"]=$sub1;
+					}
+					else if((strcmp($key,"PurchaseProductQty"))==0)
+					{
+						$inventoryData["InventorytransactionProductQty"]=$value;
+					}
+				}
+				//check_p($inventoryData);
+				
+				//
+				$AccountlastInsertId=$this->mm->insert_data("tblinventorytransaction",$inventoryData);
+				
+			}
+			//samundar end
+			
+			
+			// echo $lastInsertId;
+			$tableDetailName='tbl'.$name.'detail';
+			$tablePresent=$this->mm->check_table_present($tableDetailName);
+
+			if ($tablePresent)
+			{
+				$detailArray=explode(',',($_POST['DetailArray']));
+				$tableField=$this->mm->get_table_heading($tableDetailName);
+				
+				$tableField=remove_last_field($tableField,2);
+
+				$multiData=array();     
+				foreach($detailArray as $value)
+				{
+					$dataTableField=array();
+					$dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId);
+					$dataTableField[ucfirst($name."detail"."CDT")]=date('Y-m-d H:i:s');
+					$dataTableField[ucfirst($name."detail"."Status")]=0;
+
+					array_push($multiData,$dataTableField);
+					if(isset($dataTableField['ProductId']))
+					{
+					$productId=$dataTableField['ProductId'];
 					}
 					else{
-						$data=$this->mm->insert_multiple_data($tableDetailName,$multiData);
+					$productId='';
 					}
-                    
-                    
-					if($tblName=='tblorder')
-					{
-						//$a=$dataTableField['CompanyId'];
-						// $whereData=array("tblorder.OrderId"=>$lastInsertId);
-    	    			// $lrdata=$this->mm->get_a_data_join('tblorder',$whereData);
 
-                		$lrdata=$this->mm->custom_query("SELECT * FROM tblorder where OrderId=$lastInsertId");
-						// $totbox=$totalBox;
-						// $totweight=$totalWeight;
-						// if($lrdata[0]['OrderHamali']='')
-						// {
-						// 	$lrdata[0]['OrderHamali']=0;
-						// }
-						// if($lrdata[0]['OrderFreight']='')
-						// {
-						// 	$lrdata[0]['OrderFreight']=0;
-						// }
-						//check_p($lrdata);
-						 $orderTotal=0;
-						if($lrdata[0]['OrderRateDropDown']=='Weight')
+					if($productId!='')
+					{
+						if(strpos($productId,'-')!==false)
 						{
-							$orderTotal=($totalWeight * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight']; 
+							// echo "false".$productId;
 						}
 						else
 						{
-							$orderTotal=($totalBox * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight'];
+							
+							$tableField1=$this->mm->get_table_heading('tblproduct');
+							$tableField1=remove_last_field($tableField,2);
+							$dataTableField1["ProductName"]=$productId;
+							$dataTableField1["CompanyId"]=$this->session->CompanyId;
+							$dataTableField1[ucfirst('Product'."CDT")]=date('Y-m-d H:i:s');
+							$dataTableField1[ucfirst('Product'."Status")]=0;
+							$lastInsertId1=$this->mm->insert_data('tblproduct',$dataTableField1);
+							$demo=$lastInsertId1.'-'.$productId;
+							$dataTableField['ProductId']=$demo;
 						}
-						//$dataTableField["CompanyCode"]=$lrdata[0]['CompanyCode'];
-						// echo $orderTotal;
-						//  die();
-						$tblname1='tblorder';
-	            		$whereData1=array(  
-    					'OrderId'=>$lastInsertId,
-						);
-						$mainData1=array(
-				       		'OrderTotalBoxes'=>$totalBox,
-							'OrderTotalWeight'=>$totalWeight,
-							'OrderTotal'=>$orderTotal,
-							'OrderYear'=>$this->session->LoginYear,
-					 	);
-        				$data1['Data']=$this->mm->update_data_api($tblname1,$mainData1,$whereData1);
-						//$AccountlastInsertId
-						
-						// $accountsData["TransactionDate"]=date('Y-m-d');
-						// $accountsData["TransactionRemark"]="Debit to My account";
-						// $accountsData["AccountsId"]=$lrdata[0]['AccountsId'];
-						// $accountsData["TransactionDebitAmount"]=$orderTotal;
-						// $accountsData["TransactionCreditAmount"]=0;
-						// $accountsData["CompanyId"]=$this->session->CompanyId;
-						// $accountsData["TransactionStatus"]=0;
-						// $accountsData["TransactionCDT"]=date('Y-m-d H:i:s');
-						
-						// $AccountlastInsertId1=$this->mm->insert_data("tbltransaction",$accountsData);
-						//$dataTableField["AccountsId"]=$AccountlastInsertId;
-
 					}
-	                
-	           	}
-	            $tableDetailName='tbl'.$name.'detail2';
-                $tablePresent=$this->mm->check_table_present($tableDetailName);
-                if ($tablePresent)
-                {
-                  //  check_p($lastInsertId);
-                    $detailArray=explode(',',($_POST['DetailArray2']));
-	                $tableField=$this->mm->get_table_heading($tableDetailName);
-            	    //check_p($tableField);
-            	    $tableField=remove_last_field($tableField,2);
-            	    $multiData=array();
-            	    $multiData1=array();
-	                foreach($detailArray as $value)
-	                {
-	                    $dataTableField=array();
-            	        $dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId);
-            	        $dataTableField[ucfirst($name."detail2"."CDT")]=date('Y-m-d H:i:s');
-            	        $dataTableField[ucfirst($name."detail2"."Status")]=0;
-            	        //$data=$this->mm->insert_data($tableDetailName,$dataTableField);
-            	       
-            	        //array_push($multiData,$dataTableField);
-            	        
-            	        	if( $tableDetailName =='tblorderpalletdetail2' && $dataTableField[ucfirst($name.'detail2Name')] != '' && $dataTableField[ucfirst($name.'detail2Qty')] != '')
-			        		    array_push($multiData,$dataTableField);
-						    else
-							    array_push($multiData1,$dataTableField);
-	                  //   print_r($data)
-	                    
-	                }
-	               
-	                //check_p($multiData);
-	                if($tableDetailName =='tblorderpalletdetail2')
-	                    $data=$this->mm->insert_multiple_data($tableDetailName,$multiData);
-	                else
-	                    $data=$this->mm->insert_multiple_data($tableDetailName,$multiData1);
-	           	}
-	           
-	       }
-	       //check_p($data);
-	        echo  $lastInsertId;
+				} 
+				$arr=array();
+				//create array for store orderpalletqty 04-05-2021
+				$pQty=array();
+				if($tableDetailName=='tblorderpalletdetail')
+				{	//$k=0;
+					$totalPalletQty=0;
+					for($i=0;$i<count($multiData);$i++)
+					{
+						if(($multiData[$i]['OrderpalletdetailQty']=='') || ($multiData[$i]['OrderpalletdetailRate']==''))
+						{
+							unset($multiData[$i]);
+						}
+						else{
+						
+						$totalPalletAmount=0;
+						$totalPalletAmount=$totalPalletAmount +($multiData[$i]['OrderpalletdetailQty'] *  $multiData[$i]['OrderpalletdetailRate']);
+						$totalPalletQty=$totalPalletQty +($multiData[$i]['OrderpalletdetailQty']);
+						$multiData[$i]['OrderpalletdetailTotal']=$totalPalletAmount;
+						//$k++;
+						$arr[$i]['OrderpalletdetailId']=$multiData[$i]['OrderpalletdetailId'];
+						$arr[$i]['OrderpalletIdReference']=$multiData[$i]['OrderpalletIdReference'];
+						$arr[$i]['OrderpalletdetailQty']=$multiData[$i]['OrderpalletdetailQty'];
+						$arr[$i]['OrderpalletdetailRate']=$multiData[$i]['OrderpalletdetailRate'];
+						$arr[$i]['OrderpalletdetailTotal']=$multiData[$i]['OrderpalletdetailTotal'];
+						$arr[$i]['OrderpalletdetailCDT']=$multiData[$i]['OrderpalletdetailCDT'];
+						$arr[$i]['OrderpalletdetailStatus']=$multiData[$i]['OrderpalletdetailStatus'];
+						}
+						
+					}
+					$tblname='tblorderpallet';
+					$updateData=array(  
+					'OrderpalletTotalQty'=>$totalPalletQty,
+					); 
+					$where=array(  
+						'OrderpalletId'=>$multiData[0]['OrderpalletIdReference']
+					); 
+					$OrderpalletInsertId1=$this->mm->update_data_api($tblname,$updateData,$where);
+					
+				}
+				
+				$totalBox=0;
+				$totalWeight=0;
+				if($tableDetailName=='tblorderdetail')
+				{	
+					for($i=0;$i<count($multiData);$i++)
+					{
+						if(($multiData[$i]['OrderdetailProductName']==''))
+						{
+							unset($multiData[$i]);
+
+						}
+						else{
+						
+						if($multiData[$i]['OrderdetailBox'] == '')
+						{
+							$multiData[$i]['OrderdetailBox'] = 0;
+						}
+						if($multiData[$i]['OrderdetailWeight'] == '')
+						{
+							$multiData[$i]['OrderdetailWeight'] = 0;
+						}
+
+						$totalBox=$totalBox +((int)$multiData[$i]['OrderdetailBox']);
+						$totalWeight=$totalWeight +($multiData[$i]['OrderdetailWeight']);
+						
+						$arr[$i]['OrderdetailId']=$multiData[$i]['OrderdetailId'];
+						$arr[$i]['OrderIdReference']=$multiData[$i]['OrderIdReference'];
+						$arr[$i]['OrderdetailProductName']=$multiData[$i]['OrderdetailProductName'];
+						$arr[$i]['OrderdetailBox']=$multiData[$i]['OrderdetailBox'];
+						$arr[$i]['OrderdetailName']=$multiData[$i]['OrderdetailName'];
+						$arr[$i]['OrderdetailWeight']=$multiData[$i]['OrderdetailWeight'];
+						$arr[$i]['OrderdetailDcpiNo']=$multiData[$i]['OrderdetailDcpiNo'];
+						$arr[$i]['OrderdetailCDT']=$multiData[$i]['OrderdetailCDT'];
+						$arr[$i]['OrderdetailStatus']=$multiData[$i]['OrderdetailStatus'];
+						}
+						
+					}
+					
+				}
+				if($tableDetailName=='tblorderpalletdetail' || $tableDetailName=='tblorderdetail')
+				{
+					$data=$this->mm->insert_multiple_data($tableDetailName,$arr);
+				}
+				else{
+					$data=$this->mm->insert_multiple_data($tableDetailName,$multiData);
+				}
+				
+				
+				if($tblName=='tblorder')
+				{
+					$lrdata=$this->mm->custom_query("SELECT * FROM tblorder where OrderId=$lastInsertId");
+
+						$orderTotal=0;
+					if($lrdata[0]['OrderRateDropDown']=='Weight')
+					{
+						$orderTotal=($totalWeight * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight']; 
+					}
+					else
+					{
+						$orderTotal=($totalBox * $lrdata[0]['OrderRate']) +(int) $lrdata[0]['OrderHamali'] +(int) $lrdata[0]['OrderFreight'];
+					}
+
+					$tblname1='tblorder';
+					$whereData1=array(  
+					'OrderId'=>$lastInsertId,
+					);
+					$mainData1=array(
+						'OrderTotalBoxes'=>$totalBox,
+						'OrderTotalWeight'=>$totalWeight,
+						'OrderTotal'=>$orderTotal,
+						'OrderYear'=>$this->session->LoginYear,
+					);
+					$data1['Data']=$this->mm->update_data_api($tblname1,$mainData1,$whereData1);
+				}
+				
+			}
+			$tableDetailName='tbl'.$name.'detail2';
+			$tablePresent=$this->mm->check_table_present($tableDetailName);
+			if ($tablePresent)
+			{
+				$detailArray=explode(',',($_POST['DetailArray2']));
+				$tableField=$this->mm->get_table_heading($tableDetailName);
+				$tableField=remove_last_field($tableField,2);
+				$multiData=array();
+				$multiData1=array();
+				foreach($detailArray as $value)
+				{
+					$dataTableField=array();
+					$dataTableField=$this->insert_data_function($tableField,$value,$lastInsertId);
+					$dataTableField[ucfirst($name."detail2"."CDT")]=date('Y-m-d H:i:s');
+					$dataTableField[ucfirst($name."detail2"."Status")]=0;
+
+					if( $tableDetailName =='tblorderpalletdetail2' && $dataTableField[ucfirst($name.'detail2Name')] != '' && $dataTableField[ucfirst($name.'detail2Qty')] != '')
+						array_push($multiData,$dataTableField);
+					else
+						array_push($multiData1,$dataTableField);
+					
+				}
+				
+				//check_p($multiData);
+				if($tableDetailName =='tblorderpalletdetail2')
+					$data=$this->mm->insert_multiple_data($tableDetailName,$multiData);
+				else
+					$data=$this->mm->insert_multiple_data($tableDetailName,$multiData1);
+			}
+			
+		}
+	    echo  $lastInsertId;
 	}
 	
 	// samundar add 22-03-2021
