@@ -18,6 +18,7 @@ class Dashboard extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->library('session');
 		$this->load->library('excel');
+		$this->load->library('Pdf');
 		
 		if(date('d-m-Y') == '20-04-2024')
 		{
@@ -26,6 +27,14 @@ class Dashboard extends CI_Controller {
 		}
 
 	}
+
+	function pdf_downloadDifferent()
+    {
+        // $html = $this->load->view('Admin/GeneratePdfView', [], true);
+		$html = '<h1>Hello, World!</h1><p>This is a PDF generated using Dompdf with CodeIgniter.</p>';
+        $this->pdf->generate($html, 'example_pdf');
+    }
+
 	public function index()
 	{
 	    if(!($this->session->AdminId or $this->session->EmployeeId))

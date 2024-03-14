@@ -30,9 +30,9 @@
 <!-- AdminLTE App -->
 <script src="<?=site_url('resources/assets/dist/js/adminlte.js')?>"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="<?=site_url('resources/assets/dist/js/pages/dashboard.js')?>"></script>
+<!-- <script src="<?=site_url('resources/assets/dist/js/pages/dashboard.js')?>"></script> -->
 <!-- AdminLTE for demo purposes -->
-<script src="<?=site_url('resources/assets/dist/js/demo.js')?>"></script>
+<!-- <script src="<?=site_url('resources/assets/dist/js/demo.js')?>"></script> -->
 <!-- DataTables -->
 <script src="<?=site_url('resources/assets/plugins/datatables/jquery.dataTables.js')?>"></script>
 <script src="<?=site_url('resources/assets/plugins/datatables/dataTables.bootstrap4.js')?>"></script>
