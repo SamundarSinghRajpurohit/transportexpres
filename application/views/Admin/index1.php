@@ -165,13 +165,11 @@
                           <th>LR Print</th>
                           <th>Update</th>
                           <th>Delete</th>
+                          <th>Email Send</th>
                         </tr>
                         </thead>
                         <tbody>
                             <?php
-                          //  $OrderData = json_decode(json_encode($OrderData)) ;
-                           // echo "<pre>";
-                           //print_r($OrderData); 
                            $OrderCount=count($OrderData);
                            $limit=5;
                             for($i=0;$i<count($OrderData) && $i<$limit;$i++)
@@ -200,7 +198,13 @@
                                         <td><a href="<?=site_url('/Admin/BillPrintDifferent/'.$OrderData[$i]["OrderId"])?>"><i class="fa fa-print admin-custom-color-opp" ></i></a></td>
                                         <td><a href="<?=base_url('/Admin/AddOrderCustomDifferent/'.$OrderData[$i]["OrderId"])?>" id="<?=$OrderData[$i]["OrderId"]?>"><i class="fa fa-edit admin-custom-color-opp" ></i></a></td>
                                         <!--<td><button value="<?=$OrderData[$i]["OrderId"]?>" name="order" class="deletedata"><i class="fa fa-trash admin-custom-color-opp" ></i></button></td>-->
-                                        <td><button onclick="myFunction('order','<?=$OrderData[$i]["OrderId"]?>')"><i class="fa fa-trash admin-custom-color-opp" ></i></button></td>
+                                        <td>
+                                          <button onclick="myFunction('order','<?=$OrderData[$i]["OrderId"]?>')"><i class="fa fa-trash admin-custom-color-opp" ></i></button>
+                                        </td>
+
+                                        <td>
+                                          <button onclick="sendMail('lr','<?=$OrderData[$i]["OrderId"]?>')"><i class="fa fa-envelope-o admin-custom-color-opp" ></i></button>
+                                        </td>
                                    </tr> 
                                <?php 
                             }
@@ -246,13 +250,11 @@
                          <th>Pallet Print</th>
                          <th>Update</th>
                          <th>Delete</th>
+                         <th>Email Send</th>
                         </tr>
                         </thead>
                         <tbody>
                             <?php
-                          //  $OrderData = json_decode(json_encode($OrderData)) ;
-                           // echo "<pre>";
-                           //print_r($PalletData);
                            $OrderCount=count($PalletData);
                            $limit=5;
                             for($i=0;$i<count($PalletData) && $i < $limit;$i++)
@@ -282,6 +284,9 @@
                                         <td><a href="<?=base_url('/Admin/AddPalletCustomDifferent/'.$PalletData[$i]["OrderpalletId"])?>" id="<?=$PalletData[$i]["OrderpalletId"]?>"><i class="fa fa-edit admin-custom-color-opp" ></i></a></td>
                                         <!--<td><button value="<?=$PalletData[$i]["OrderpalletId"]?>" name="orderpallet" class="deletedata"><i class="fa fa-trash admin-custom-color-opp" ></i></button></td>-->
                                         <td><button onclick="myFunction('orderpallet','<?=$PalletData[$i]["OrderpalletId"]?>')"><i class="fa fa-trash admin-custom-color-opp" ></i></button></td>
+                                        <td>
+                                          <button onclick="sendMail('pallet','<?=$PalletData[$i]["OrderpalletId"]?>')"><i class="fa fa-envelope-o admin-custom-color-opp" ></i></button>
+                                        </td>
                                    </tr> 
                                <?php 
                             }
@@ -541,6 +546,8 @@
 
 <script type="text/javascript">
     var deleteData="<?=base_url('Admin/Ajax/deleteData/')?>";
+    var lrMailSendUrl="<?=base_url('Admin/Dashboard/pdf_downloadDifferent/')?>";
+    var palletMailSendUrl="<?=base_url('Admin/Dashboard/pallet_pdf_downloadDifferent/')?>";
 
     $(document).ready(function(){
         $(".deletedata").click(function(){
@@ -549,17 +556,12 @@
         {
         var id=$(this).val();
         var Keyname=$(this).attr("name");
-       // alert(id);
-        //alert(Keyname);
-        //die();
             $.ajax({
                 type: 'POST',
                 url: deleteData + id + '/' + Keyname,
                 success: function(data) {
                     alert("Data Deleted Successfully");
                      window.location.reload();
-                    //$("p").text(data);
-
                 }
             });
         }
@@ -573,9 +575,6 @@ function myFunction($name,$id) {
         {
         var id=$id;
         var Keyname=$name;
-        // alert(id);
-        // alert(Keyname);
-        // die();
             $.ajax({
                 type: 'POST',
                 url: deleteData + id + '/' + Keyname,
@@ -583,12 +582,37 @@ function myFunction($name,$id) {
                     alert("Data Deleted Successfully");
                      window.location.reload();
                     //$("p").text(data);
-
                 }
             });
         }
 }
-</script>
 
-        
- 
+function sendMail($name,$id) {
+  var id = $id;
+  var Keyname = $name;
+
+  if(Keyname == 'lr'){
+    var main_url= lrMailSendUrl;
+  }
+  else
+  {
+    var main_url= palletMailSendUrl;
+  }
+  // loader start
+  $('#loader').show();
+
+  $.ajax({
+      type: 'POST',
+      url: main_url + id,
+      dataType: 'json',
+      success: function(response) {
+        alert(response.message);
+        $('#loader').hide();
+      },
+      error: function(xhr, status, error) {
+        alert(xhr.responseText);
+        $('#loader').hide();
+      }
+  });
+}
+</script>

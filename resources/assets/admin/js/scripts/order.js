@@ -113,7 +113,20 @@ var getList = function(){
                     
                     return btn;
                 }
-            }                        
+            },
+            {
+                data: "",
+                visible: true,
+                sortable:false,
+                searchable:false,
+                render: function (data, type, full, meta){
+                    var btn = '';
+
+                    btn += '<button onclick=sendMail("lr",'+(full.OrderId)+')><i class="fa fa-envelope-o admin-custom-color-opp" ></i></button>';
+                    
+                    return btn;
+                }
+            }                     
         ],
         "drawCallback": function(settings) {
             var switches = Array.prototype.slice.call(document.querySelectorAll('.switchery'));
@@ -206,7 +219,20 @@ var getpalletList = function(){
                     
                     return btn;
                 }
-            }                        
+            },
+            {
+                data: "",
+                visible: true,
+                sortable:false,
+                searchable:false,
+                render: function (data, type, full, meta){
+                    var btn = '';
+
+                    btn += '<button onclick=sendMail("pallet",'+(full.OrderpalletId)+')><i class="fa fa-envelope-o admin-custom-color-opp" ></i></button>';
+                    
+                    return btn;
+                }
+            }                       
         ],
         "drawCallback": function(settings) {
             var switches = Array.prototype.slice.call(document.querySelectorAll('.switchery'));

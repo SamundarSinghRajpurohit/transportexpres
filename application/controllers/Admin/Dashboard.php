@@ -28,11 +28,181 @@ class Dashboard extends CI_Controller {
 
 	}
 
-	function pdf_downloadDifferent()
+	function pdf_downloadDifferent($id)
     {
-        // $html = $this->load->view('Admin/GeneratePdfView', [], true);
-		$html = '<h1>Hello, World!</h1><p>This is a PDF generated using Dompdf with CodeIgniter.</p>';
-        $this->pdf->generate($html, 'example_pdf');
+		$config = Array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'mroadlines8@gmail.com',
+			'smtp_pass' => 'qlhm whbq tkck akqs',
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'wordwrap' => TRUE
+		);
+
+		$whereData=array("CompanyId"=>$this->session->CompanyId);
+		$data['CompanyData']=$this->mm->get_a_data("tblcompany",$whereData);
+		$where=array("OrderId"=>$id);
+		$data['OrderData']=$this->mm->get_a_data_join("tblorder",$where);
+		$where=array("OrderIdReference"=>$id);
+		$data['orderDetail']=$this->mm->get_a_data_join("tblorderdetail",$where);
+		// check_p($data['OrderData']);
+		if(!empty($data['OrderData'])){
+
+			if($data['OrderData'][0]->DealerEmailId !=""){
+				$pdf_file = 'LR_'.$id.'.pdf';
+
+				$pdf_directory = FCPATH . 'resources/pdf/';
+
+				if (!is_dir($pdf_directory)) {
+					mkdir($pdf_directory, 0777, true);
+				}
+
+				// if (!file_exists($pdf_directory . $pdf_file)) 
+				// {
+					$html = $this->load->view('Admin/GeneratePdfView', $data, true);
+					$pdf_content = $this->pdf->generate($html, 'LR_'.$id, false);
+					file_put_contents($pdf_directory . $pdf_file, $pdf_content);
+				// }
+
+				// mail send code
+				$message = 'LR Invoice';
+				$this->load->library('email', $config);
+				$this->email->set_newline("\r\n");
+				$this->email->from('mroadlines8@gmail.com');
+				$this->email->to($data['OrderData'][0]->DealerEmailId);
+				$this->email->subject('LR Invoice from MAHENDRA ROADLINES');
+				$this->email->message($message);
+				$this->email->attach($pdf_directory . $pdf_file);
+
+				if($this->email->send())
+				{
+					// echo 'Email sent.';
+					$data = array(
+						'message' => 'Email send successfully.',
+						'status' => 'true',
+						'data' => []
+					);
+				}
+				else
+				{
+					// show_error($this->email->print_debugger());
+					$data = array(
+						'message' => 'Issue in email send,please try again.',
+						'status' => 'false',
+						'data' => []
+					);
+				}
+			}
+			else{
+				$data = array(
+					'message' => 'Please check dealer email id. Email id is blank.',
+					'status' => 'false',
+					'data' => []
+				);
+			}
+		}
+		else{
+			$data = array(
+				'message' => 'Lr bill data not found.',
+				'status' => 'false',
+				'data' => []
+			);
+		}
+
+		header('Content-Type: application/json');
+    	echo json_encode($data);
+    }
+
+	function pallet_pdf_downloadDifferent($id)
+    {
+		$config = Array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'mroadlines8@gmail.com',
+			'smtp_pass' => 'qlhm whbq tkck akqs',
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'wordwrap' => TRUE
+		);
+
+		$whereData=array("CompanyId"=>$this->session->CompanyId);
+		$data['CompanyData']=$this->mm->get_a_data("tblcompany",$whereData);
+		$where=array("OrderpalletId"=>$id);
+		$data['OrderPalletData']=$this->mm->get_a_data_join("tblorderpallet",$where);
+		$where=array("OrderpalletIdReference"=>$id);
+		$data['OrderPalletDetail']=$this->mm->get_a_data_join("tblorderpalletdetail",$where);
+		$data['OrderPalletDetail2']=$this->mm->get_a_data_join("tblorderpalletdetail2",$where);
+
+		// //
+		if(!empty($data['OrderPalletData'])){
+
+			if($data['OrderPalletData'][0]->DealerEmailId !=""){
+				$pdf_file = 'PL_'.$id.'.pdf';
+
+				$pdf_directory = FCPATH . 'resources/pdf/pallet/';
+
+				if (!is_dir($pdf_directory)) {
+					mkdir($pdf_directory, 0777, true);
+				}
+
+				// if (!file_exists($pdf_directory . $pdf_file)) 
+				// {
+					$html = $this->load->view('Admin/PalletGeneratePdfView', $data, true);
+					$pdf_content = $this->pdf->generate($html, 'PL_'.$id,false);
+					file_put_contents($pdf_directory . $pdf_file, $pdf_content);
+				// }
+
+				// mail send code
+				$message = 'Pallet Invoice';
+				$this->load->library('email', $config);
+				$this->email->set_newline("\r\n");
+				$this->email->from('mroadlines8@gmail.com');
+				$this->email->to($data['OrderPalletData'][0]->DealerEmailId);
+				$this->email->subject('Pallet Invoice from MAHENDRA ROADLINES');
+				$this->email->message($message);
+				$this->email->attach($pdf_directory . $pdf_file);
+
+				if($this->email->send())
+				{
+					// echo 'Email sent.';
+					$data = array(
+						'message' => 'Email send successfully.',
+						'status' => 'true',
+						'data' => []
+					);
+				}
+				else
+				{
+					// show_error($this->email->print_debugger());
+					$data = array(
+						'message' => 'Issue in email send,please try again.',
+						'status' => 'false',
+						'data' => []
+					);
+				}
+			}
+			else{
+				$data = array(
+					'message' => 'Please check dealer email id. Email id is blank.',
+					'status' => 'false',
+					'data' => []
+				);
+			}
+		}
+		else{
+			$data = array(
+				'message' => 'Lr bill data not found.',
+				'status' => 'false',
+				'data' => []
+			);
+		}
+
+		header('Content-Type: application/json');
+    	echo json_encode($data);
+		// 
     }
 
 	public function index()
@@ -41,21 +211,12 @@ class Dashboard extends CI_Controller {
 		{
 			$this->load->view('Admin/login');
 		}
+
 		else
 		{
     	    $data=$this->index_header();
-    	    
-    	    
-        	//$total=$this->mm->total_data('tblorder','OrderTotal');
-        //	$data['TotalSales']=$total;
-        	//check_p($data);
         	$tblName="tblorder";
-        	//$where["OrderDate"]=date('Y-m-d');
-        	//$data['OrderData']=convert_object_arraY($this->mm->get_a_data_join($tblName,$where));
-            
-        	//check_p($data['OrderData']);
-			
-			  
+  
 			if(isset($this->session->EmployeeId))
 			{
 			    $comId=$this->session->CompanyId;
@@ -63,8 +224,7 @@ class Dashboard extends CI_Controller {
 			    $whereData1=array('tblorderpallet.CompanyId'=>$comId);
         	    $data['Order']=convert_object_arraY($this->mm->get_all_data_join_order_by_active_status1($tblName,'OrderId',$whereData,"desc"));
         	    $data['OrderData']=convert_object_arraY($this->mm->get_all_data_join_order_by_active_status1($tblName,'OrderId',$whereData,"Desc"));
-        	    $data['PalletData']=convert_object_arraY($this->mm->get_all_data_join_order_by_active_status1('tblorderpallet','OrderpalletId',$whereData1,"Desc")); 
-        	    //$data['PalletDatadeatil']=convert_object_arraY($this->mm->get_all_data_join_order_by_active_status1('tblorderpalletdetail','OrderpalletIdReference',$whereData1,"Desc")); 
+        	    $data['PalletData']=convert_object_arraY($this->mm->get_all_data_join_order_by_active_status1('tblorderpallet','OrderpalletId',$whereData1,"Desc"));
 			}
 			else
 			{
@@ -75,31 +235,19 @@ class Dashboard extends CI_Controller {
 			$data['Fields']=$this->mm->get_table_heading($tblName);
 			$data['OriginalFields']=$data['Fields'];
 			$data['ajaxSucessData']=ajax_success_data($data['OriginalFields']);
-		    // $data['tableNameData']=$this->mm->get_all_table_heading();
-		    // $data['sidebarData']=array_map('ucfirst',str_replace('tbl','',$data['tableNameData']));
-	   
-		   
-		//    $data['Fields']=$this->mm->get_table_heading($tblName);
-		// 	$data['OriginalFields']=$data['Fields'];
-		// 	$data['mainData']=convert_object_arraY($this->mm->get_all_data_join_order_By($tblName,'OrderId','desc'));
+
 			$this->index_view($data);
     	}
     }
     //nilesh
-     public function  Dashboard()
+    public function  Dashboard()
     {
-            $data=$this->index_header();
-    	    
-    		//$total=$this->mm->total_data('tblorder','OrderTotal');
-        	//$data['TotalSales']=$total;
-        	//check_p($data);
-        	$tblName="tblorder";
-        	//$data['OrderData']=convert_object_arraY($this->mm->get_all_data_join($tblName));
-            $data['OrderData']=convert_object_arraY($this->mm->get_all_data_join_order_by($tblName,'OrderId',"desc"));
-           // $data['ProductData']=convert_object_arraY($this->mm->custom_query("SELECT *,`SubcategoryName`, `ProductQty`-`ProductLowstock` AS `difference` FROM tblproduct INNER JOIN tblsubcategory ON tblproduct.SubcategoryId = tblsubcategory.SubcategoryId ORDER BY `difference`"));
-        
-        	$data['Order']=convert_object_arraY($this->mm->get_all_data_join_order_by($tblName,'OrderId',"desc"));
-        	$this->index_view($data);
+		$data=$this->index_header();
+		$tblName="tblorder";
+		$data['OrderData']=convert_object_arraY($this->mm->get_all_data_join_order_by($tblName,'OrderId',"desc"));
+	
+		$data['Order']=convert_object_arraY($this->mm->get_all_data_join_order_by($tblName,'OrderId',"desc"));
+		$this->index_view($data);
     }
     //end
     //nilesh

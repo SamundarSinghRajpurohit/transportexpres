@@ -48,6 +48,7 @@
                                  <!--<h5>Consignor : <?=$OrderData[0]->ConsignorName?></h5>-->
                                  <!--<h5 class="samu">Eway Bill No :-<?=$OrderData[0]->OrderEwayBillNo?></h5>-->
                                  <h5 class="samu">Dealer's Name :<?=$OrderData[0]->DealerName?></h5>
+                                 <h5 class="samu">Dealer's GST No. :<?=$OrderData[0]->DealerGSTNO?></h5>
                                  <h5 class="samu">Eway Bill No :-<?=$OrderData[0]->OrderEwayBillNo?>
                                  <h5>Delivery From :<?=$OrderData[0]->OrderFrom?></h5>
                                  <!--<h5>Consignee :<?=$OrderData[0]->ConsigneeName?></h5></td>-->

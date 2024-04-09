@@ -40,6 +40,7 @@
                                         <th>Total Amount</th>
                                         <th>Action</th>
                                         <th>Delete</th>
+                                        <th>Email Send</th>
                                     </tr>
                                 </thead>
                                 <tbody class="custom-table-tbody">
@@ -232,6 +233,9 @@
 <script type="text/javascript">
     var deleteData="<?=base_url('Admin/Ajax/deleteData/')?>";
     var BASE_URL ="<?=base_url()?>";
+    var lrMailSendUrl="<?=base_url('Admin/Dashboard/pdf_downloadDifferent/')?>";
+    var palletMailSendUrl="<?=base_url('Admin/Dashboard/pallet_pdf_downloadDifferent/')?>";
+
     $(document).ready(function(){
         $(".deletedata1").click(function(){
         var r=confirm("Do you  want to delete this record");
@@ -271,5 +275,34 @@ function myFunction($name,$id) {
                 }
             });
         }
+}
+
+function sendMail($name,$id) {
+  var id = $id;
+  var Keyname = $name;
+
+  if(Keyname == 'lr'){
+    var main_url= lrMailSendUrl;
+  }
+  else
+  {
+    var main_url= palletMailSendUrl;
+  }
+  // loader start
+  $('#loader').show();
+
+  $.ajax({
+      type: 'POST',
+      url: main_url + id,
+      dataType: 'json',
+      success: function(response) {
+        alert(response.message);
+        $('#loader').hide();
+      },
+      error: function(xhr, status, error) {
+        alert(xhr.responseText);
+        $('#loader').hide();
+      }
+  });
 }
 </script>

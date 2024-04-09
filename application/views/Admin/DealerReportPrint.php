@@ -101,6 +101,7 @@
                                                 {
                                             ?>
                                             <h5 class="samu">Billed to :-<?=$DealerData[0]->DealerName?></h5>
+                                            <h5 class="samu">GST No. :-<?=$DealerData[0]->DealerGSTNO?></h5>
                                             <h5><?=$DealerData[0]->DealerAddress?></h5>
                                             <?php
                                                 }
