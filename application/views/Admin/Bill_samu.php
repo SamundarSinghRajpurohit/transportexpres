@@ -50,7 +50,7 @@
                     <table class="table text-left border">
                         <tr >
                            
-                            <td>
+                            <td style="width:30%">
                                  <!--<h5 class="samu">Consignor : <?=$OrderData[0]->ConsignorName?></h5>-->
                                  <h5 class="samu">Dealer's Name :<?=$OrderData[0]->DealerName?></h5>
                                  <h5 class="samu">Dealer's GST No. :<?=$OrderData[0]->DealerGSTNO?></h5>
@@ -58,7 +58,7 @@
                                  <h5 class="samu">Delivery From :<?=$OrderData[0]->OrderFrom?></h5>
                                  <!--<h5 class="samu">Consignee :<?=$OrderData[0]->ConsigneeName?></h5></td>-->
                             </td>
-                            <td>
+                            <td style="width:15%">
                                 <!--<h5 class="samu">Gst No: <?=$CompanyData[0]->CompanyGSTno?></h5>-->
                                 <h5 class="samu">Date : <?=$OrderData[0]->OrderDate?></h5>
                                 <?php
@@ -196,7 +196,7 @@
                     <table class="table text-left border">
                         <tr >
                            
-                            <td>
+                            <td style="width:30%">
                                  <!--<h5 class="samu">Consignor : <?=$OrderData[0]->ConsignorName?></h5>-->
                                  <h5 class="samu">Dealer's Name :<?=$OrderData[0]->DealerName?></h5>
                                  <h5 class="samu">Dealer's GST No. :<?=$OrderData[0]->DealerGSTNO?></h5>
@@ -204,7 +204,7 @@
                                  <h5 class="samu">Delivery From :<?=$OrderData[0]->OrderFrom?></h5>
                                  <!--<h5 class="samu">Consignee :<?=$OrderData[0]->ConsigneeName?></h5></td>-->
                             </td>
-                            <td>
+                            <td style="width:15%">
                                 <!--<h5 class="samu">Gst No: <?=$CompanyData[0]->CompanyGSTno?></h5>-->
                                 <h5 class="samu">Date : <?=$OrderData[0]->OrderDate?></h5>
                                  <?php

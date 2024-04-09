@@ -44,7 +44,7 @@
                     <table class="table text-left border">
                         <tr>
                            
-                            <td>
+                            <td style="width:30%">
                                  <!--<h5>Consignor : <?=$OrderData[0]->ConsignorName?></h5>-->
                                  <!--<h5 class="samu">Eway Bill No :-<?=$OrderData[0]->OrderEwayBillNo?></h5>-->
                                  <h5 class="samu">Dealer's Name :<?=$OrderData[0]->DealerName?></h5>
@@ -53,7 +53,7 @@
                                  <h5>Delivery From :<?=$OrderData[0]->OrderFrom?></h5>
                                  <!--<h5>Consignee :<?=$OrderData[0]->ConsigneeName?></h5></td>-->
                             </td>
-                            <td>
+                            <td style="width:15%">
                                 <!--<h5>Gst No: <?=$CompanyData[0]->CompanyGSTno?></h5>-->
                                 <h5>Date : <?=$OrderData[0]->OrderDate?></h5>
                                  <?php
