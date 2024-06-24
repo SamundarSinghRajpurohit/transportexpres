@@ -25,6 +25,7 @@
                               <h4><b>
                               <?=$CompanyData[0]->CompanyName?></b></h4>
                               <?=$CompanyData[0]->CompanyAddress?><br><br>
+                              <b>Email Id</b> :- <?=$CompanyData[0]->CompanyEmailId?><br>
                               <b>Bank Name</b> :- <?=$CompanyData[0]->CompanyBankName?><br>
                               <b>A/C No</b> :- <?=$CompanyData[0]->CompanyAccountNo?><br>
                               <b>IFSC CODE</b> :- <?=$CompanyData[0]->CompanyIFSCCode?><br>

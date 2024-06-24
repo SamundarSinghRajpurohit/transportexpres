@@ -62,6 +62,16 @@
                                 </div>
                             </form>
                         </div>
+
+                        <!-- download pdf start -->
+                        <!-- <div class="col-12 mb-2 row" style="margin-top: 17px;">
+                            <div class="col-9"></div>
+                            <div class="col-3">
+                                <button onclick="sendMail('<-?=$pdfDealerId?>','<-?=$pdfToDate?>','<-?=$pdfFromDate?>')">Download PDF & Send Mail</button> -->
+                                <!-- <button type="submit" class="form-control btn btn-primary" id="gstInvoiceUpdateButton">Download PDF</button> -->
+                            <!-- <div> -->
+                        <!-- </div></div> -->
+                        <!-- end -->
                     </div>
                     <!-- sjr end -->
 
@@ -76,6 +86,7 @@
                                         <td>
                                             <h3><b><?=$CompanyData[0]->CompanyName?></b></h3>
                                             <h5><?=$CompanyData[0]->CompanyAddress?></h5>
+                                            <h5><?=$CompanyData[0]->CompanyEmailId?></h5>
                                             
                                         </td>
                                         <td class="text-right">
@@ -321,5 +332,36 @@ $("#gstValueUpdate").submit(function(e) {
         }
     });
 });
+
+function sendMail($id,$toDate,$fromDate) {
+  var lrMailSendUrl="<?=base_url('Admin/Dashboard/Dealer_pdf_downloadDifferent/')?>";
+  var id = $id;
+  var toDate = $toDate;
+  var fromDate = $fromDate;
+
+  var formData = new FormData();
+  formData.append('id', id);
+  formData.append('toDate', toDate);
+  formData.append('fromDate', fromDate);
+  // loader start
+  $('#loader').show();
+
+  $.ajax({
+      type: 'POST',
+      url: lrMailSendUrl + id,
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(response) {
+        alert(response.message);
+        $('#loader').hide();
+      },
+      error: function(xhr, status, error) {
+        alert(xhr.responseText);
+        $('#loader').hide();
+      }
+  });
+}
 </script>
 <!-- sjr end -->

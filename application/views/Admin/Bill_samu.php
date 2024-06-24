@@ -23,8 +23,6 @@
                 <div class="invoice p-0 mb-0">
               <!-- title row -->
               <div class="row">
-                  
-                 
                  <div class="col-12 table-responsive ">
                      <table class="table text-left border">
                         <tr>
@@ -34,6 +32,7 @@
                             <td>
                                 <h3><b><?=$CompanyData[0]->CompanyName?></b></h3>
                                 <h5><?=$CompanyData[0]->CompanyAddress?></h5>
+                                <h5><?=$CompanyData[0]->CompanyEmailId?></h5>
                             </td>
                             <td class="text-right ">
                                 <h4>(Mo)<?=$CompanyData[0]->CompanyPhoneNo?></h4>
@@ -180,6 +179,7 @@
                             <td>
                                 <h3><b><?=$CompanyData[0]->CompanyName?></b></h3>
                                 <h5><?=$CompanyData[0]->CompanyAddress?></h5>
+                                <h5><?=$CompanyData[0]->CompanyEmailId?></h5>
                             </td>
                             <td class="text-right">
                                 <h4>(Mo)<?=$CompanyData[0]->CompanyPhoneNo?></h4>
