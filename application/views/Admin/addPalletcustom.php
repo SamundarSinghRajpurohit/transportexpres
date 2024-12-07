@@ -90,6 +90,20 @@
                         <label class=" col-md-12"  >Party Code</label> 
                             <input type="text" class="form-control col-md-12 " name="OrderpalletPartycode"  id="OrderpalletPartycode" value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderpalletPartycode:' ' ?>">
                         </div>
+
+                        <!-- add for gst % -->
+                        <div class=" input-group form-group col-md-3" id="OrderpalletGSTPerdiv" >
+                              <label class=" col-md-12"  >GST %</label> 
+                              <select class="form-control col-md-12" name="OrderpalletGSTPer" id="OrderpalletGSTPer">
+                                  <option value="0" <?=(isset($OrderData[0]->OrderpalletGSTPer) && $OrderData[0]->OrderpalletGSTPer == 0)?'selected':'' ?>>0</option>
+                                  <option value="5" <?=(isset($OrderData[0]->OrderpalletGSTPer) && $OrderData[0]->OrderpalletGSTPer == 5)?'selected':'' ?>>5</option>
+                                  <option value="12" <?=(isset($OrderData[0]->OrderpalletGSTPer) && $OrderData[0]->OrderpalletGSTPer == 12)?'selected':'' ?>>12</option>
+                                  <option value="18" <?=(isset($OrderData[0]->OrderpalletGSTPer) && $OrderData[0]->OrderpalletGSTPer == 18)?'selected':'' ?>>18</option>
+                                  <option value="28" <?=(isset($OrderData[0]->OrderpalletGSTPer) && $OrderData[0]->OrderpalletGSTPer == 28)?'selected':'' ?>>28</option>
+                              </select>
+                          </div>
+                          <!-- add for gst % -->
+
                           <div class="col-md-12">
                               <table id="customTable "class="table table-bordered table-striped table-highlight text-left" >
                                 <thead>

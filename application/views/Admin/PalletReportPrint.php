@@ -25,6 +25,8 @@
                                 $other = array();
                                 $total=0;
                                 $totalWeight=0;
+                                $totalGSTAmount=0;
+                                $mainTotal=0;
                                 foreach($reportData as $key=>$value)
                                 {
                                 if(!in_array($value['OrderpalletId'], $name))
@@ -166,6 +168,9 @@
                                         <th>Consignee</th>
                                         <th>Total Pallet</th>
                                         <th>Rate</th>
+                                        <th>Sub Total</th>
+                                        <th>GST %</th>
+                                        <th>GST Amount</th>
                                         <th>Total</th>
                                         </tr>
                                     </thead>
@@ -213,11 +218,27 @@
                                                     <td><?=$record[$i]['Orderpalletdetail2Name'].'-'?><?=(isset($record[$i]['secondname']))?$record[$i]['secondname']:'' ?></td>
                                                     <td><?=$record[$i]['OrderpalletTotalQty']?></td>
                                                     <td><?=$record[$i]['Orderpalletdetail2Rate']?></td>
-                                                    <td><?=$total=$total+($record[$i]['OrderpalletTotalQty'] * $record[$i]['Orderpalletdetail2Rate'])?></td>
+                                                    <!-- <td><?=$total=$total+($record[$i]['OrderpalletTotalQty'] * $record[$i]['Orderpalletdetail2Rate'])?></td> -->
+
+                                                    <!--  -->
+                                                    <?php 
+                                                        $subTotalPallet = 0;
+                                                        $subTotalPallet = round($record[$i]['OrderpalletTotalQty'] * $record[$i]['Orderpalletdetail2Rate']);
+                                                    ?>
+                                                    <td ><?=$subTotalPallet?></td>
+                                                    <td ><?=$record[$i]['OrderpalletGSTPer']?></td>
+                                                    <?php 
+                                                        $gstAmount = 0 ;
+                                                        $gstAmount = round(($subTotalPallet * $record[$i]['OrderpalletGSTPer']) / 100);
+                                                    ?>
+                                                    <td ><?=($gstAmount)?></td>
+                                                    <td ><?=($subTotalPallet + $gstAmount)?></td>
+                                                    <!--  -->
                                                 </tr> 
                                         <?php 
-                                        $subtotal=$subtotal+$total;
+                                        $subtotal=$subtotal+$subTotalPallet;
                                         $subPalletTotal=$subPalletTotal+$record[$i]['OrderpalletTotalQty'];
+                                        $totalGSTAmount = $totalGSTAmount + $gstAmount;
                                         //$total=$total+$record[$i]['OrderTotal'];
                                         //   $totalWeight=$totalWeight+$record[$i]['OrderTotalWeight'];
                                         }
@@ -233,6 +254,14 @@
                                         </td>
                                         <td  class="table text-right border">
                                         <b><?=$subtotal?></b>
+                                        </td>
+                                        <td  class="table text-right border">
+                                        </td>
+                                        <td  class="table text-right border">
+                                        <b><?=round($totalGSTAmount)?></b>
+                                        </td>
+                                        <td  class="table text-right border">
+                                        <b><?=round($subtotal + $totalGSTAmount)?></b>
                                         </td>
                                     </tr>
 

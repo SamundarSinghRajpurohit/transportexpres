@@ -2598,6 +2598,7 @@ class Dashboard extends CI_Controller {
 			$filterArray[$i]['DealerGSTNO'] = $data['orderData'][$i]['DealerGSTNO'];
 			$filterArray[$i]['OrderGstInvoice'] = $data['orderData'][$i]['OrderGstInvoice'];
 			$filterArray[$i]['OrderBillDate'] = $data['orderData'][$i]['OrderBillDate'];
+			$filterArray[$i]['OrderGstPer'] = $data['orderData'][$i]['OrderGSTPer'];
 			$noCount++;
 		}
 
@@ -2607,6 +2608,7 @@ class Dashboard extends CI_Controller {
 			$filterArray[$noCount]['DealerGSTNO'] = $data['palletData'][$i]['DealerGSTNO'];
 			$filterArray[$noCount]['OrderGstInvoice'] = $data['palletData'][$i]['OrderpalletGstInvoice'];
 			$filterArray[$noCount]['OrderBillDate'] = $data['palletData'][$i]['OrderpalletBillDate'];
+			$filterArray[$noCount]['OrderGstPer'] = $data['palletData'][$i]['OrderpalletGSTPer'];
 			$noCount++;
 		}
 		$price = array_column($filterArray, 'OrderBillDate');
@@ -2614,6 +2616,7 @@ class Dashboard extends CI_Controller {
 		array_multisort($price, SORT_ASC, $filterArray);
 
 		$data['filterArray'] = $filterArray;
+
 		$data['Date']=array("To"=>$todate,"From"=>$fromdate);
 		$this->CreateExcelDifferent($data);
 		// $whereData=array("CompanyId"=>$this->session->CompanyId);
@@ -3611,7 +3614,12 @@ class Dashboard extends CI_Controller {
 			$sheet2->setCellValue('F'.($colValue+$i), 'Y');
 			$sheet2->setCellValue('G'.($colValue+$i), 'Regular');
 			$sheet2->setCellValue('H'.($colValue+$i), '');
-			$sheet2->setCellValue('I'.($colValue+$i), '5.00');
+			if($data['filterArray'][$i]['OrderGstPer'] > 0){
+				$sheet2->setCellValue('I'.($colValue+$i), $data['filterArray'][$i]['OrderGstPer']);
+			}
+			else{
+				$sheet2->setCellValue('I'.($colValue+$i), '5.00');
+			}
 			$sheet2->setCellValue('J'.($colValue+$i), round($data['filterArray'][$i]['SUM(tblorder.OrderTotal)'],2));
 			$sheet2->setCellValue('K'.($colValue+$i), '');
 		}

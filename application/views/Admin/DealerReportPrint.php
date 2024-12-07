@@ -21,6 +21,8 @@
                                 $name = array();
                                 $total=0;
                                 $totalWeight=0;
+                                $totalGSTAmount=0;
+                                $mainTotal=0;
                                 foreach($reportData as $key=>$value)
                                 {
                                     if(!in_array($value['OrderId'], $name))
@@ -172,6 +174,9 @@
                                         <th>Freight</th>
                                         <th>Hamali</th>
                                         <th>Rate</th>
+                                        <th>Sub Total</th>
+                                        <th>GST %</th>
+                                        <th>GST Amount</th>
                                         <th>Total</th>
                                         </tr>
                                     </thead>
@@ -210,11 +215,23 @@
                                                     <td><?=$record[$i]['OrderFreight']?></td>
                                                     <td ><?=$record[$i]['OrderHamali']?></td>
                                                     <td ><?=$record[$i]['OrderRate']?></td>
-                                                    <td ><?=round($record[$i]['OrderTotal'])?></td>
+                                                    <?php 
+                                                        $subTotal = 0;
+                                                        $subTotal = round($record[$i]['OrderTotal']);
+                                                    ?>
+                                                    <td ><?=$subTotal?></td>
+                                                    <td ><?=$record[$i]['OrderGSTPer']?></td>
+                                                    <?php 
+                                                        $gstAmount = 0 ;
+                                                        $gstAmount = round(($subTotal * $record[$i]['OrderGSTPer']) / 100);
+                                                    ?>
+                                                    <td ><?=($gstAmount)?></td>
+                                                    <td ><?=($subTotal + $gstAmount)?></td>
                                                 </tr> 
                                         <?php 
-                                        $total=$total+$record[$i]['OrderTotal'];
+                                        $total=$total+$subTotal;
                                         $totalWeight=$totalWeight+$record[$i]['OrderTotalWeight'];
+                                        $totalGSTAmount = $totalGSTAmount + $gstAmount;
                                         }
                                     ?>
                                     <tr>
@@ -229,6 +246,15 @@
                                         </td>
                                         <td class="table text-right border">
                                             <b><?=round($total)?></b>
+                                        </td>
+                                        <td class="table text-right border">
+
+                                        </td>
+                                        <td class="table text-right border">
+                                            <b><?=round($totalGSTAmount)?></b>
+                                        </td>
+                                        <td class="table text-right border">
+                                            <b><?=round($total + $totalGSTAmount)?></b>
                                         </td>
                                     </tr>
                                     <!-- <tr>-->

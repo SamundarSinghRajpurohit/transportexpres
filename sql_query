@@ -13,3 +13,7 @@
 - ALTER TABLE `tblorder` CHANGE `tblcompanies` `companies` INT(20) NULL DEFAULT NULL;
 - ALTER TABLE `tblorder` CHANGE `companies` `Companies` INT(20) NULL DEFAULT NULL;
 - ALTER TABLE `tblorderpallet` ADD `Companies` INT(20) NULL AFTER `TempoId`;
+
+24-06-2024 (new gst changes start)
+- ALTER TABLE `tblorder` ADD `OrderGSTPer` DOUBLE NOT NULL DEFAULT '0' AFTER `OrderBillDate`;
+- ALTER TABLE `tblorderpallet` ADD `OrderpalletGSTPer` DOUBLE NOT NULL DEFAULT '0' AFTER `OrderpalletBillDate`;

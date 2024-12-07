@@ -160,6 +160,19 @@
                                 <label class=" col-md-12"  >Rate</label> 
                                 <input type="text" class="form-control col-md-12" name="OrderRate" id="OrderRate" value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderRate:' ' ?>">
                             </div>
+
+                            <!-- add for gst % -->
+                            <div class=" input-group form-group col-md-3" id="OrderGSTPerdiv" >
+                                <label class=" col-md-12"  >GST %</label> 
+                                <select class="form-control col-md-12" name="OrderGSTPer" id="OrderGSTPer">
+                                    <option value="0" <?=(isset($OrderData[0]->OrderGSTPer) && $OrderData[0]->OrderGSTPer == 0)?'selected':'' ?>>0</option>
+                                    <option value="5" <?=(isset($OrderData[0]->OrderGSTPer) && $OrderData[0]->OrderGSTPer == 5)?'selected':'' ?>>5</option>
+                                    <option value="12" <?=(isset($OrderData[0]->OrderGSTPer) && $OrderData[0]->OrderGSTPer == 12)?'selected':'' ?>>12</option>
+                                    <option value="18" <?=(isset($OrderData[0]->OrderGSTPer) && $OrderData[0]->OrderGSTPer == 18)?'selected':'' ?>>18</option>
+                                    <option value="28" <?=(isset($OrderData[0]->OrderGSTPer) && $OrderData[0]->OrderGSTPer == 28)?'selected':'' ?>>28</option>
+                                </select>
+                            </div>
+                            <!-- add for gst % -->
                           <div class="col-md-12">
                               <table id="customTable "class="table table-bordered table-striped table-highlight text-left" >
                                 <thead>
