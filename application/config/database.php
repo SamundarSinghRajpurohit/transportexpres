@@ -76,9 +76,22 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
+	//'username' => 'webnafq5_homecar',
+	//'password' => 'kd@123',
+	//'database' => 'webnafq5_homecare',
+	/*
+	'username' => 'demo_krunal',
+	'password' => 'krunal@123',
+	'database' => 'demo_devimotors',*/
+	
+	
+	/*'username' => 'webnafq5_surti',
+	'password' => 'kd@987',
+	'database' => 'webnafq5_surti',*/
+    
     'username' => 'root',
 	'password' => '',
-	'database' => 'webnawbh_transportexpert',
+	'database' => 'doctoevv_transportexpert',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

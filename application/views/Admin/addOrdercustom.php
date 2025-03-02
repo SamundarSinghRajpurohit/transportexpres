@@ -1,4 +1,4 @@
-    <style>
+<style>
     @media (min-width: 576px){
       .modal-dialog {
     

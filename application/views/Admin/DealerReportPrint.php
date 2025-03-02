@@ -136,7 +136,7 @@
                                             <!--<h5>Invoice No:<?=$OrderData[0]->OrderId?></h5>-->
                                             <!--<h5>Vehicle No :<?=$OrderData[0]->TempoName?></h5>-->
                                             <h5>Invoice</h5>
-                                            <h5>Invoice No:<?=$InvoiceNo['InvoiceNo']?></h5>
+                                            <h5>Tax Invoice No:<?=$InvoiceNo['InvoiceNo']?></h5>
                                             <?php
                                                 $date1 = strtotime($InvoiceDate['InvoiceDate']);
                                                 $newformat3 = date('d-F-Y',$date1);

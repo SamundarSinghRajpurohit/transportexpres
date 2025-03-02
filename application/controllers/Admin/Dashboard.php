@@ -959,14 +959,6 @@ class Dashboard extends CI_Controller {
 	//samundar add controller  for Dealer report data print 20-05-2021
 	public function DealerReportDifferent($id='')  
 	{
-		// pdf data store
-		$data['pdfExampleRadios'] = $this->input->post("exampleRadios");
-		$data['pdfToDate'] = $this->input->post("ToDate");
-		$data['pdfFromDate'] = $this->input->post("FromDate");
-		$data['pdfCompanyId'] = $this->session->CompanyId;
-		$data['pdfDealerId'] = $this->input->post("DealerId");
-		// pdf data end
-
 		$RadioValue=$this->input->post("exampleRadios");
 		$todate=$this->input->post("ToDate");
 		$fromdate=$this->input->post("FromDate");
@@ -1016,103 +1008,6 @@ class Dashboard extends CI_Controller {
 		$this->new_comman_view_different($data);
 	}
 	//samundar end
-
-	// sjr ad for dealer report save to pdf
-	function Dealer_pdf_downloadDifferent()
-	{
-		$config = Array(
-			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
-			'smtp_user' => 'mroadlines8@gmail.com',
-			'smtp_pass' => 'qlhm whbq tkck akqs',
-			'mailtype' => 'html',
-			'charset' => 'iso-8859-1',
-			'wordwrap' => TRUE
-		);
-
-		$todate=$this->input->post("toDate");
-		$fromdate=$this->input->post("fromDate");
-		$CompanyId=$this->session->CompanyId;
-		$Id=$this->input->post("id");
-		$strPosData=strpos($Id,'-');
-		$dealerId=substr($Id,0,$strPosData);
-		$sql="select * from (((tblorder join tblconsignee on tblorder.ConsigneeId=tblconsignee.ConsigneeId) join 
-		tbltempo ON tblorder.TempoId=tbltempo.TempoId)join tblorderdetail on  tblorder.OrderId=tblorderdetail.
-		OrderIdReference)where tblorder.DealerId=$dealerId AND tblorder.CompanyId=$CompanyId And 
-		(tblorder.OrderDate >= '$fromdate' AND tblorder.OrderDate <= '$todate') And tblorder.OrderStatus=0 order 
-		by tblorder.OrderDate";
-	
-		$whereData=array("DealerId"=>$dealerId);
-		$data['DealerData']=$this->mm->get_a_data("tbldealer",$whereData);
-		check_p($data['DealerData']);
-		if(!empty($data['DealerData'])){
-
-			if($data['OrderData'][0]->DealerEmailId !=""){
-				$pdf_file = 'LR_'.$id.'.pdf';
-
-				$pdf_directory = FCPATH . 'resources/pdf/';
-
-				if (!is_dir($pdf_directory)) {
-					mkdir($pdf_directory, 0777, true);
-				}
-
-				// if (!file_exists($pdf_directory . $pdf_file)) 
-				// {
-					$html = $this->load->view('Admin/GeneratePdfView', $data, true);
-					$pdf_content = $this->pdf->generate($html, 'LR_'.$id, false);
-					file_put_contents($pdf_directory . $pdf_file, $pdf_content);
-				// }
-
-				// mail send code
-				$message = 'LR Invoice';
-				$this->load->library('email', $config);
-				$this->email->set_newline("\r\n");
-				$this->email->from('mroadlines8@gmail.com');
-				$this->email->to($data['OrderData'][0]->DealerEmailId);
-				$this->email->subject('LR Invoice from MAHENDRA ROADLINES');
-				$this->email->message($message);
-				$this->email->attach($pdf_directory . $pdf_file);
-
-				if($this->email->send())
-				{
-					// echo 'Email sent.';
-					$data = array(
-						'message' => 'Email send successfully.',
-						'status' => 'true',
-						'data' => []
-					);
-				}
-				else
-				{
-					// show_error($this->email->print_debugger());
-					$data = array(
-						'message' => 'Issue in email send,please try again.',
-						'status' => 'false',
-						'data' => []
-					);
-				}
-			}
-			else{
-				$data = array(
-					'message' => 'Please check dealer email id. Email id is blank.',
-					'status' => 'false',
-					'data' => []
-				);
-			}
-		}
-		else{
-			$data = array(
-				'message' => 'Lr bill data not found.',
-				'status' => 'false',
-				'data' => []
-			);
-		}
-
-		header('Content-Type: application/json');
-    	echo json_encode($data);
-    }
-	// sjr end
 	
 	//samundar add controller  for Pallet report data print 05-06-2021
 	public function PalletReportDifferent($id='')  
@@ -3520,14 +3415,32 @@ class Dashboard extends CI_Controller {
 		// dynamic value
 		$TotalInvoiceB2b = 0;
 		$totalAmountB2b = 0;
+		$totalAmountB2b12 = 0;
+		$totalAmountB2b5 = 0;
 		$totalRecipient = array();
+		
 		for ($i=0; $i < count($data['orderData']); $i++) {
 			$totalAmountB2b = $totalAmountB2b + $data['orderData'][$i]['SUM(tblorder.OrderTotal)'];
+
+			if($data['orderData'][$i]['OrderGSTPer'] == 12){
+				$totalAmountB2b12 = $totalAmountB2b12 + $data['orderData'][$i]['SUM(tblorder.OrderTotal)'];
+			}else{
+				$totalAmountB2b5 = $totalAmountB2b5 + $data['orderData'][$i]['SUM(tblorder.OrderTotal)'];
+			}
+
 			array_push($totalRecipient,$data['orderData'][$i]['DealerGSTNO']);
 			$TotalInvoiceB2b++;
 		}
+
 		for ($i=0; $i < count($data['palletData']); $i++) {
 			$totalAmountB2b = $totalAmountB2b + $data['palletData'][$i]['SUM(tblorderpalletdetail.OrderpalletdetailTotal)'];
+
+			if($data['palletData'][$i]['OrderpalletGSTPer'] == 12){
+				$totalAmountB2b12 = $totalAmountB2b12 + $data['palletData'][$i]['SUM(tblorderpalletdetail.OrderpalletdetailTotal)'];
+			}else{
+				$totalAmountB2b5 = $totalAmountB2b5 + $data['palletData'][$i]['SUM(tblorderpalletdetail.OrderpalletdetailTotal)'];
+			}
+
 			array_push($totalRecipient,$data['palletData'][$i]['DealerGSTNO']);
 			$TotalInvoiceB2b++;
 		}
@@ -3611,14 +3524,16 @@ class Dashboard extends CI_Controller {
 			$sheet2->setCellValue('C'.($colValue+$i), date("d-M-Y", strtotime($data['filterArray'][$i]['OrderBillDate'])));
 			$sheet2->setCellValue('D'.($colValue+$i), round($data['filterArray'][$i]['SUM(tblorder.OrderTotal)'],2));
 			$sheet2->setCellValue('E'.($colValue+$i), '24-GUJARAT');
-			$sheet2->setCellValue('F'.($colValue+$i), 'Y');
+			// $sheet2->setCellValue('F'.($colValue+$i), 'Y');
 			$sheet2->setCellValue('G'.($colValue+$i), 'Regular');
 			$sheet2->setCellValue('H'.($colValue+$i), '');
-			if($data['filterArray'][$i]['OrderGstPer'] > 0){
+			if($data['filterArray'][$i]['OrderGstPer'] == 12 || $data['filterArray'][$i]['OrderGstPer'] == 18){
 				$sheet2->setCellValue('I'.($colValue+$i), $data['filterArray'][$i]['OrderGstPer']);
+				$sheet2->setCellValue('F'.($colValue+$i), 'N');
 			}
 			else{
 				$sheet2->setCellValue('I'.($colValue+$i), '5.00');
+				$sheet2->setCellValue('F'.($colValue+$i), 'Y');
 			}
 			$sheet2->setCellValue('J'.($colValue+$i), round($data['filterArray'][$i]['SUM(tblorder.OrderTotal)'],2));
 			$sheet2->setCellValue('K'.($colValue+$i), '');
@@ -4497,12 +4412,23 @@ class Dashboard extends CI_Controller {
 		$sheet11->setCellValue('B5', 'Goods Transport services');
 		$sheet11->setCellValue('C5', 'NA');
 		$sheet11->setCellValue('D5', '0');
-		$sheet11->setCellValue('E5', round($totalAmountB2b,2));
-		$sheet11->setCellValue('F5', round($totalAmountB2b,2));
+		$sheet11->setCellValue('E5', round($totalAmountB2b5,2));
+		$sheet11->setCellValue('F5', round($totalAmountB2b5,2));
 		$sheet11->setCellValue('G5', '0');
 		$sheet11->setCellValue('H5', '0');
 		$sheet11->setCellValue('I5', '0');
 		$sheet11->setCellValue('J5', '0');
+
+		$sheet11->setCellValue('A6', '9965');
+		$sheet11->setCellValue('B6', 'Goods Transport services');
+		$sheet11->setCellValue('C6', 'NA');
+		$sheet11->setCellValue('D6', '0');
+		$sheet11->setCellValue('E6', round($totalAmountB2b12,2));
+		$sheet11->setCellValue('F6', round($totalAmountB2b12,2));
+		$sheet11->setCellValue('G6', '0');
+		$sheet11->setCellValue('H6', '0');
+		$sheet11->setCellValue('I6', '0');
+		$sheet11->setCellValue('J6', '0');
 
 		// sheet 12
 		$sheet12 = $this->excel->createSheet();

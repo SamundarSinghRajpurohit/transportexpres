@@ -113,7 +113,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan=5>Bill To:-<b><?=$dealerData[$j]['DealerName']?></b></td>
-                                                        <td colspan=1>Invoice No : <?=(int)$InvoiceNo['InvoiceNo'] + $cnt?></td>
+                                                        <td colspan=1>Tax Invoice No : <?=(int)$InvoiceNo['InvoiceNo'] + $cnt?></td>
                                                         <td colspan=3>Invoice Date :<?=$newformat3;?></td>
                                                         <td colspan=5><?=$newformat1?> to <?=$newformat2?></td>
                                                         <tr>
