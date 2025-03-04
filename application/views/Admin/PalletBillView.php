@@ -153,6 +153,7 @@
                             <thead>
                           <tr>
                             <th>consigneeName</th>
+                            <th>HSN Code</th>
                             <th>Qty</th>
                             <th>Rate</th>
                             <th>Total(Rs.)</th>
@@ -164,6 +165,7 @@
                       ?>
                         <tr>
                               <td><?=$OrderPalletDetail2[$i]->Orderpalletdetail2Name?></td>
+                              <td><?=isset($OrderPalletData[0]->OrderpalletHsnCode)?$OrderPalletData[0]->OrderpalletHsnCode:'996511'?></td>
                               <td><?=$OrderPalletDetail2[$i]->Orderpalletdetail2Qty?></td>
                               <td> <?=$OrderPalletDetail2[$i]->Orderpalletdetail2Rate?></td>
                               <td> <?=($OrderPalletDetail2[$i]->Orderpalletdetail2Rate * $OrderPalletDetail2[$i]->Orderpalletdetail2Qty)?></td>

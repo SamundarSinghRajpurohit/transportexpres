@@ -94,6 +94,7 @@
                             <tr>
                               <th>Sr.</th>
                               <th>Good</th>
+                              <th>HSN Code</th>
                               <!--<th>Rate No</th>
                               <th>Rate</th>-->
                               <th>Box</th>
@@ -110,6 +111,7 @@
                                     <tr>
                                         <td><?=($i+1)?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailProductName?></td>
+                                        <td><?=$OrderData[0]->OrderHsnCode!=""?$OrderData[0]->OrderHsnCode:'996511'?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailBox?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailName?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailWeight?></td>
@@ -241,6 +243,7 @@
                             <tr>
                               <th>Sr.</th>
                               <th>Good</th>
+                              <th>HSN Code</th>
                               <!--<th>Rate No</th>
                               <th>Rate</th>-->
                               <th>Box</th>
@@ -257,6 +260,7 @@
                                     <tr>
                                         <td><?=($i+1)?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailProductName?></td>
+                                        <td><?=$OrderData[0]->OrderHsnCode!=""?$OrderData[0]->OrderHsnCode:'996511'?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailBox?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailName?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailWeight?></td>

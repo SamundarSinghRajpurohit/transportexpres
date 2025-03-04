@@ -89,6 +89,7 @@
                             <tr>
                               <th>Sr.</th>
                               <th>Good</th>
+                              <th>HSN Code</th>
                               <!--<th>Rate No</th>
                               <th>Rate</th>-->
                               <th>Box</th>
@@ -105,6 +106,7 @@
                                     <tr>
                                         <td><?=($i+1)?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailProductName?></td>
+                                        <td><?=isset($OrderData[0]->OrderpalletHsnCode)?$OrderData[0]->OrderpalletHsnCode:'996511'?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailBox?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailName?></td>
                                         <td><?=$orderDetail[$i]->OrderdetailWeight?></td>

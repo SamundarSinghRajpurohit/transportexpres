@@ -17,3 +17,7 @@
 24-06-2024 (new gst changes start)
 - ALTER TABLE `tblorder` ADD `OrderGSTPer` DOUBLE NOT NULL DEFAULT '0' AFTER `OrderBillDate`;
 - ALTER TABLE `tblorderpallet` ADD `OrderpalletGSTPer` DOUBLE NOT NULL DEFAULT '0' AFTER `OrderpalletBillDate`;
+
+02-03-2025
+- ALTER TABLE `tblorder` ADD `OrderHsnCode` VARCHAR(50) NOT NULL AFTER `OrderGSTPer`;
+- ALTER TABLE `tblorderpallet` ADD `OrderpalletHsnCode` VARCHAR(50) NULL AFTER `OrderpalletGSTPer`;

@@ -173,6 +173,12 @@
                                 </select>
                             </div>
                             <!-- add for gst % -->
+
+                            <div class="  input-group form-group col-md-3" name="OrderHsnCode" id="OrderHsnCodediv" >
+                                <label class=" col-md-12"  >HSN Code</label> 
+                                <input type="text" class="form-control col-md-12" name="OrderHsnCode" id="OrderHsnCode" value="<?=(isset($OrderData[0]))?$OrderData[0]->OrderHsnCode:'996511' ?>">
+                            </div>
+
                           <div class="col-md-12">
                               <table id="customTable "class="table table-bordered table-striped table-highlight text-left" >
                                 <thead>

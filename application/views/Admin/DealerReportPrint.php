@@ -163,6 +163,7 @@
                                         <tr>
                                             <th>Sr No.</th>
                                         <th>Lr No</th>
+                                        <th>HSN Code</th>
                                         <th>Tempo</th>
                                         <th>Lr Date</th>
                                         <th>Product</th>
@@ -204,6 +205,7 @@
                                                     <?php
                                                     }
                                                     ?>
+                                                    <td><?=$record[$i]['OrderHsnCode']!=""?$record[$i]['OrderHsnCode']:'996511'?></td>
                                                     <td><?=$record[$i]['TempoName']?></td>
                                                     <td><?=$record[$i]['OrderDate']?></td>
                                                     <td><?=$record[$i]['OrderdetailProductName']?></td>
@@ -235,7 +237,7 @@
                                         }
                                     ?>
                                     <tr>
-                                        <td colspan=9 class="table text-right border">
+                                        <td colspan=10 class="table text-right border">
                                             <!--<b>Total Amount</b>:-<b> <?=$total?></b>-->
                                         </td>
                                         <td class="table text-right border">

@@ -162,6 +162,7 @@
                                         <tr>
                                             <th>Sr No.</th>
                                         <th>Lr No</th>
+                                        <th>HSN Code</th>
                                         <th>Tempo</th>
                                         <th>Lr Date</th>
                                         
@@ -213,6 +214,7 @@
                                                     <?php
                                                     }
                                                     ?>
+                                                    <td><?=$record[$i]['OrderpalletHsnCode']!=""?$record[$i]['OrderpalletHsnCode']:'996511'?></td>
                                                     <td><?=$record[$i]['TempoName']?></td>
                                                     <td><?=$record[$i]['OrderpalletDate']?></td>
                                                     <td><?=$record[$i]['Orderpalletdetail2Name'].'-'?><?=(isset($record[$i]['secondname']))?$record[$i]['secondname']:'' ?></td>
@@ -244,7 +246,7 @@
                                         }
                                     ?>
                                     <tr>
-                                        <td colspan=5 class="table text-right border">
+                                        <td colspan=6 class="table text-right border">
                                             
                                         </td>
                                         <td  class="table text-right border">
